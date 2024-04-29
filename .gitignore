@@ -112,3 +112,5 @@ google-services.json
 bashScripts/
 test/*.txt
 test/*.ini
+
+shrinkwrap.yaml
