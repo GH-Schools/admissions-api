@@ -1,3 +1,7 @@
-const router = require('express').Router;
+const router = require("express").Router();
+const apikeyMid = require("../middlewares/apikeyMid");
+const controllers = require('../controllers');
 
-module.exports = router
+router.get("/health-check", apikeyMid, controllers.healthCheck);
+
+module.exports = router;
