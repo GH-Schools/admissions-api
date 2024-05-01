@@ -1,6 +1,6 @@
 const dataRepo = require("../database/dataRepo");
 const DataSource = require("../database/dataSource");
-const StatusCodes = require("../constants/StatusCodes");
+const StatusCodes = require("../constants/statusCodes");
 
 const { sendSuccessResponse, sendErrorResponse } = require("../utils/sendAPIResponses");
 
