@@ -1,8 +1,18 @@
+/**
+ *
+ * @param {Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ * @returns
+ */
 module.exports = (req, res, next) => {
   try {
-    console.log(err);
-    
+    return res
+      .status(200)
+      .send(
+        "<h1>This resource is not found. Please check the endpoint you are trying to access.</h1>"
+      );
   } catch (error) {
     next(error);
   }
-}
+};
