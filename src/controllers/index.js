@@ -1,5 +1,9 @@
-const generalControllers = require('./general');
+const userControllers = require("./users");
+const generalControllers = require("./general");
+const paymentControllers = require("./payment");
 
 module.exports = {
-  ...generalControllers
-}
+  ...userControllers,
+  ...generalControllers,
+  ...paymentControllers,
+};

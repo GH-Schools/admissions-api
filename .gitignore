@@ -109,6 +109,7 @@ uploads/*
 .DS_Store
 sequelize*.json
 *firebase-credentials*.json
+*service_account_credentials*.json
 google-services.json
 
 bashScripts/
