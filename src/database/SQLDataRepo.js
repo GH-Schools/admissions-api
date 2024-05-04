@@ -65,6 +65,7 @@ const DataRepo = function () {
       });
       return response?.data;
     },
+
     /**
      * Finds a user
      * @param {string} searchParam

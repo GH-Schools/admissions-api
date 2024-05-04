@@ -24,7 +24,6 @@ const sendEmailWithMailGunPackage = async (payload, withCC = true) => {
     const DOMAIN = process.env.MAILGUN_DOMAIN;
 
     const { receipientEmail, subject, content } = payload;
-    // print(payload);
 
     const mailgun = new Mailgun(formData);
     const client = mailgun.client({ username: "api", key: API_KEY });
