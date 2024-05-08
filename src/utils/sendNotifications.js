@@ -2,7 +2,7 @@
 const formData = require("form-data");
 const Mailgun = require("mailgun.js");
 
-const MailTemplate = require("../templates/HtmlTemplates");
+const MailTemplate = require("../views/HtmlViews");
 
 const { MailBody } = MailTemplate;
 

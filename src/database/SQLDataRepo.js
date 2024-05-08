@@ -1,6 +1,9 @@
+const { Op } = require("sequelize");
+const models = require("../../models/index");
+const patterns = require("../constants/patterns");
 const googleService = require("../utils/googleServices");
 const hash = require("../utils/hash");
-const { generateRandomCharacters } = require("../utils/helpers");
+const { User, Payments } = models;
 
 const DataRepo = function () {
   return {
@@ -13,6 +16,24 @@ const DataRepo = function () {
     },
 
     /**
+     * @param {string | number | boolean} queryParam
+     * @param {any[]} stringConditions
+     * @param {any[]} uuidConditions
+     * @returns any[]
+     */
+    UUIDOrStringTypeConditionSelector(
+      queryParam,
+      stringConditions,
+      uuidConditions
+    ) {
+      // const isUUID = PatternTemplates.uuidV4Pattern.test(queryParam);
+      const isUUID =
+        typeof queryParam === "string" &&
+        !!(queryParam || "").match(patterns.uuidV4Pattern);
+      return isUUID ? uuidConditions : stringConditions;
+    },
+
+    /**
      * Adds a new user
      * @param {{
      * firstName: string;
@@ -20,7 +41,9 @@ const DataRepo = function () {
      * mobile: string;
      * email: string;
      * password: string;
+     * role: 'STUDENT';
      * hasVerifiedEmail: boolean;
+     * emailVerificationToken: string;
      * hasVerifiedPhone: boolean;
      * }} payload
      * @returns
@@ -31,39 +54,26 @@ const DataRepo = function () {
       mobile,
       email,
       password,
+      role,
       hasVerifiedEmail = false,
+      emailVerificationToken,
       hasVerifiedPhone = false,
       isActive = true,
     }) {
-      const userId = generateRandomCharacters(6, {
-        lowercase: true,
-        splitBy: "-",
-        splitInterval: "3",
-      });
-      const createdAt = new Date();
-      const updatedAt = createdAt;
+      const payload = {
+        firstName,
+        lastName,
+        mobile,
+        email,
+        role,
+        password,
+        hasVerifiedEmail,
+        emailVerificationToken,
+        hasVerifiedPhone,
+        isActive,
+      };
 
-      const auth = await googleService.getAuthToken();
-      const response = await googleService.appendToSpreadSheetValues({
-        auth,
-        sheetName: "UserInfo",
-        values: [
-          [
-            userId,
-            firstName,
-            lastName,
-            email,
-            mobile,
-            hash.encryptV2(password),
-            hasVerifiedEmail,
-            hasVerifiedPhone,
-            isActive,
-            createdAt,
-            updatedAt,
-          ],
-        ],
-      });
-      return response?.data;
+      return User.create(payload);
     },
 
     /**
@@ -72,23 +82,53 @@ const DataRepo = function () {
      * @returns
      */
     async fetchOneUser(searchParam) {
-      const auth = await googleService.getAuthToken();
-      const response = await googleService.getSpreadSheetValues({
-        auth,
-        sheetName: "UserInfo",
+      return User.findOne({
+        where: {
+          [Op.or]: this.UUIDOrStringTypeConditionSelector(
+            searchParam,
+            [{ email: searchParam }, { mobile: searchParam }],
+            [{ userId: searchParam }]
+          ),
+        },
       });
+    },
 
-      if (response?.data) {
-        const { values } = response.data;
-        const users = googleService.mapValuesToObject(values);
-        return users.find((user) => {
-          return [user["Email"], user["Phone"], user["UserID"]].includes(
-            searchParam
-          );
-        });
-      }
+    /**
+     * Adds a new payment record
+     * @param {{
+     * userId: string;
+     * reference: string;
+     * isActive: boolean;
+     * deleted: boolean;
+     * }} payload
+     * @returns
+     */
+    async createPaymentRecord({ userId, reference, isActive = true, deleted }) {
+      return Payments.create({
+        userId,
+        reference,
+        isActive,
+        deleted,
+      });
+    },
 
-      return response?.data;
+    /**
+     * Finds a payment record
+     * @param {string} reference
+     * @param {string | null} [userId=null] 
+     * @returns
+     */
+    async fetchOnePayment(reference, userId) {
+      return Payments.findOne({
+        where: {
+          userId,
+          [Op.or]: this.UUIDOrStringTypeConditionSelector(
+            reference,
+            [{ reference }],
+            [{ userId: reference }, { payId: reference }]
+          ),
+        },
+      });
     },
   };
 };

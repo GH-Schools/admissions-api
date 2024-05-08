@@ -11,8 +11,9 @@ router.post(
   apikeyMid,
   validatorMiddleWare.validateLogin,
   validatorMiddleWare.validateRequest,
-  controllers.login
+  controllers.loginUser
 );
+
 router.post(
   "/auth/register",
   apikeyMid,
@@ -20,6 +21,13 @@ router.post(
   validatorMiddleWare.selectValidation("firstName", "lastName", "mobile"),
   validatorMiddleWare.validateRequest,
   controllers.registerUser
+);
+
+router.get(
+  "/get-profile",
+  apikeyMid,
+  authMid,
+  controllers.getUserProfile
 );
 
 router.post(

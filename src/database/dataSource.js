@@ -11,15 +11,7 @@ const DataSource = function (dataRepo) {
 
     /**
      * Adds a new user
-     * @param {{
-     * firstName: string;
-     * lastName: string;
-     * mobile: string;
-     * email: string;
-     * password: string;
-     * hasVerifiedEmail: boolean;
-     * hasVerifiedPhone: boolean;
-     * }} payload
+     * @param {import('../schemas/User')} payload
      * @returns
      */
     async createUser(payload) {
@@ -37,20 +29,22 @@ const DataSource = function (dataRepo) {
 
     /**
      * Adds a new payment record
-     * @param {{
-    * firstName: string;
-    * lastName: string;
-    * mobile: string;
-    * email: string;
-    * password: string;
-    * hasVerifiedEmail: boolean;
-    * hasVerifiedPhone: boolean;
-    * }} payload
-    * @returns
-    */
-   async createPaymentRecord(payload) {
-     return dataRepo.createPaymentRecord(payload);
-   },
+     * @param {import('../schemas/PaymentSchema')} payload
+     * @returns
+     */
+    async createPaymentRecord(payload) {
+      return dataRepo.createPaymentRecord(payload);
+    },
+
+    /**
+     * Finds a payment record
+     * @param {string} reference
+     * @param {string} [userId] 
+     * @returns
+     */
+    async fetchOnePayment(reference, userId) {
+      return dataRepo.fetchOnePayment(reference, userId);
+    },
   };
 };
 

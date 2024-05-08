@@ -1,5 +1,5 @@
 "use strict";
-const { Model } = require("sequelize");
+const { Model, UUIDV4 } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
   class Payments extends Model {
@@ -10,13 +10,37 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Payments.belongsTo(models.User, {
+        foreignKey: "userId",
+        targetKey: "userId",
+      });
     }
   }
 
   Payments.init(
     {
-      uuid: {
+      payId: {
         type: DataTypes.UUID,
+        defaultValue: UUIDV4,
+        unique: true,
+      },
+      userId: {
+        allowNull: false,
+        type: DataTypes.UUID,
+      },
+      reference: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      isActive: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
+      },
+      deleted: {
+        allowNull: false,
+        defaultValue: false,
+        type: DataTypes.BOOLEAN,
       },
     },
     {

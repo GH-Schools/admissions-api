@@ -36,8 +36,8 @@ const HtmlViews = {
               </tr>
               <tr>
                 <td style="text-align:center;">
-                  <a href="${process.env.BNJ_WEB_BASE_URL}" title="logo" target="_blank">
-                  <img width="180" height= "50" src="${process.env.BNJ_WEB_BASE_URL}/favicon.ico" title="logo" alt="logo" style="object-fit:contain;">
+                  <a href="${process.env.APP_BASE_URL}" title="logo" target="_blank">
+                  <img width="180" height= "50" src="${process.env.APP_BASE_URL}/favicon.png" title="logo" alt="logo" style="object-fit:contain;">
                   </a>
                 </td>
               </tr>
@@ -70,7 +70,7 @@ const HtmlViews = {
               </tr>
               <tr>
                 <td style="text-align:center;">
-                  <p style="font-size:14px; color:rgba(69, 80, 86, 0.7411764705882353); line-height:18px; margin:0 0 0;">&copy; <strong>www.lotto.com</strong></p>
+                  <p style="font-size:14px; color:rgba(69, 80, 86, 0.7411764705882353); line-height:18px; margin:0 0 0;">&copy; <strong>Visit our Homepage</strong></p>
                 </td>
               </tr>
               <tr>
@@ -170,16 +170,34 @@ const HtmlViews = {
    * @param {string} emailVerificationLink
    * @returns string
    */
-  UserVerificationMailContent(firstname, lastname, emailVerificationLink) {
-    return `
+  UserVerificationMailContent(
+    firstname,
+    lastname,
+    onboardingPassword,
+    emailVerificationLink
+  ) {
+    firstname = capitalizeFirstLetters(firstname);
+    lastname = capitalizeFirstLetters(lastname);
+    return !onboardingPassword
+      ? `
     <div>
       <p style="font-size: 18px;">Welcome ${firstname} ${lastname}!</p><br/>
       <p style="font-size: 18px;line-height: 1.5">Please click the button below to verify your new account and have fun!</p><br><br/>
       <a href='${emailVerificationLink}' style="display:block;">
-        <button style="background-color: darkgreen;border: none;border-radius:5px;color: white;width: 70%;height: 60px;text-align:center">Verify Account</button>
+        <button style="background-color: darkgreen;border: none;border-radius:5px;color: white;width: 70%;height: 60px;text-align:center">Next Steps</button>
       </a>
     </div>
-  `;
+  `
+      : `
+  <div>
+    <p style="font-size: 18px;">Welcome ${firstname} ${lastname}!</p><br/>
+    <p style="font-size: 18px;">A one-time password has been generated for you: ${onboardingPassword}</p><br/>
+    <p style="font-size: 18px;line-height: 1.5">Please click the button below to verify/login to your new account using your mobile number and your one-time password!</p><br><br/>
+    <a href='${emailVerificationLink}' style="display:block;">
+      <button style="background-color: darkgreen;border: none;border-radius:5px;color: white;width: 70%;height: 60px;text-align:center">Next Steps</button>
+    </a>
+  </div>
+`;
   },
 
   /**

@@ -7,35 +7,22 @@ const { generateRandomCharacters } = require("../utils/helpers");
  */
 class PaymentSchema {
   /**
-   * @param {string} firstname
-   * @param {string} lastname
-   * @param {string} email
-   * @param {string} mobile
-   * @param {string} password
-   * @param {string} role
+   * @param {string} userId
+   * @param {string} reference
    */
   constructor(
-    firstName,
-    lastName,
-    email,
-    mobile,
-    password,
-    role = 'STUDENT',
+    userId,
+    reference,
   ) {
-    this.userId = generateRandomCharacters(6, {
+    this.payId = generateRandomCharacters(6, {
       lowercase: true,
       splitBy: "-",
       splitInterval: "3",
     });
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.email = email;
-    this.mobile = mobile;
-    this.password = hash.encryptV2(password);
-    this.hasVerifiedEmail = false;
-    this.hasVerifiedPhone = false;
-    this.role = role;
+    this.reference = reference;
+    this.userId = userId;
     this.isActive = true;
+    this.deleted = false;
     this.createdAt = new Date();
     this.updatedAt = this.createdAt;
   }

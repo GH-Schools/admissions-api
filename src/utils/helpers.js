@@ -17,6 +17,10 @@ module.exports = {
     return output;
   },
 
+  formatPhone(mobile) {
+    return mobile ? mobile.replace(/(\+234)|(\+233)/g, "0") : null
+  },
+
   /**
    * A helper method for generating random characters with configuration options
    * @param {number} length The length of the generated string

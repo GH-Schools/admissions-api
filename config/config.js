@@ -8,9 +8,7 @@ module.exports = {
     use_env_variable: "DATABASE_URL_DEV",
     dialect: "mysql",
     // Use a different storage (sequelize, json, none). Default: none
-    seederStorage: "json",
-    // Use a different file name. Default: sequelize-data.json
-    seederStoragePath: "seeders/sequelizeData.json",
+    seederStorage: "sequelize",
     logging: false,
     dialectOptions: {
       multipleStatements: true
@@ -28,10 +26,6 @@ module.exports = {
     logging: false,
     dialectOptions: {
       multipleStatements: true
-      // ssl: {
-      //   //   require: true,
-      //   //   rejectUnauthorized: false,
-      // },
     },
     // Use a different storage (sequelize, json, none). Default: none
     seederStorage: "sequelize",
@@ -44,10 +38,6 @@ module.exports = {
     logging: false,
     dialectOptions: {
       multipleStatements: true
-      // ssl: {
-      //   //   require: true,
-      //   //   rejectUnauthorized: false,
-      // },
     },
     // Use a different storage (sequelize, json, none). Default: none
     seederStorage: "sequelize",
