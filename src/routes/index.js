@@ -65,7 +65,7 @@ router.post(
 router.post(
   "/session/create-session",
   apikeyMid,
-  authMid,
+  // authMid,
   validatorMiddleWare.selectValidation("title"),
   validatorMiddleWare.validateRequest,
   controllers.registerNewSession

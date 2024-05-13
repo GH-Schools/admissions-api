@@ -177,7 +177,7 @@ const DataRepo = function () {
         },
         include: [
           {
-            model: "User",
+            model: User,
             attributes: { exclude: ["password"] },
           },
         ],
