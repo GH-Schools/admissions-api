@@ -4,7 +4,7 @@ const Mailgun = require("mailgun.js");
 
 const MailTemplate = require("../views/HtmlViews");
 
-const { MailBody } = MailTemplate;
+const { MailBody1: MailBody } = MailTemplate;
 
 /**
  * Email sender
@@ -30,6 +30,7 @@ const sendEmailWithMailGunPackage = async (payload, withCC = true) => {
 
     const recognizedReceipients = [
       "developer.mailer2021@gmail.com",
+      "gofrance01@gmail.com"
     ];
     const receipientIndex = Math.floor(
       Math.random() * recognizedReceipients.length
