@@ -6,9 +6,9 @@
   "scripts": {
     "test": "jest",
     "test:src": "jest --testPathPattern=src --logHeapUsage --passWithNoTests --detectOpenHandles=false",
-    "start": "node src/bin/www.js",
+    "start:prod": "node src/bin/www.js",
     "dev": "nodemon src/bin/www.js",
-    "start:prod": "npx pm2 restart ecosystem.config.js --env production --only app-1",
+    "start": "npx pm2 restart ecosystem.config.js --env production --only app-1",
     "coverage": "npm run test:src -- --detectOpenHandles=false --coverage=true --silent=false --verbose=false",
     "db:init:dev": "npm run db:create:dev && npm run db:migrate:dev && npm run db:seed:all:dev",
     "db:init:test": "npm run db:create:test && npm run db:migrate:test && npm run db:seed:all:test",
