@@ -30,12 +30,51 @@ router.get(
   controllers.getUserProfile
 );
 
+router.get(
+  "/payment/get-my-payments",
+  apikeyMid,
+  authMid,
+  controllers.getAllUserPayments
+);
+
+router.post(
+  "/payment/verify-payment-by-mobile",
+  apikeyMid,
+  validatorMiddleWare.selectValidation("mobile"),
+  validatorMiddleWare.validateRequest,
+  controllers.verifyPaymentByMobile
+);
+
+router.post(
+  "/payment/verify-payment-by-reference",
+  apikeyMid,
+  validatorMiddleWare.selectValidation("reference"),
+  validatorMiddleWare.validateRequest,
+  controllers.verifyPaymentByReference
+);
+
 router.post(
   "/payment/success-webhook",
   apikeyMid,
-  validatorMiddleWare.selectValidation("firstName", "lastName", "mobile", "reference"),
+  validatorMiddleWare.selectValidation("firstName", "lastName", "mobile", "reference", "amount"),
   validatorMiddleWare.validateRequest,
   controllers.paymentWebhook
+);
+
+// SESSIONS
+router.post(
+  "/session/create-session",
+  apikeyMid,
+  authMid,
+  validatorMiddleWare.selectValidation("title"),
+  validatorMiddleWare.validateRequest,
+  controllers.registerNewSession
+);
+
+router.get(
+  "/session/get-current-session",
+  apikeyMid,
+  controllers.getCurrentSession
 );
 
 module.exports = router;

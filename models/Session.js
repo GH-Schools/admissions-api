@@ -2,7 +2,7 @@
 const { Model, UUIDV4 } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-  class Payments extends Model {
+  class Session extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -10,45 +10,40 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Payments.belongsTo(models.User, {
-        foreignKey: "userId",
-        targetKey: "userId",
-      });
-
-      Payments.belongsTo(models.Session, {
+      Session.hasMany(models.Payments, {
         foreignKey: "sessionId",
-        targetKey: "sessionId",
+        sourceKey: "sessionId",
       });
     }
   }
 
-  Payments.init(
+  Session.init(
     {
-      payId: {
+      sessionId: {
         type: DataTypes.UUID,
         defaultValue: UUIDV4,
         unique: true,
       },
-      userId: {
+      title: {
         allowNull: false,
-        type: DataTypes.UUID,
+        type: DataTypes.STRING
       },
-      amount: {
-        type: DataTypes.DECIMAL(16, 2),
-        allowNull: false,
+      startDate: {
+        allowNull: true,
+        type: DataTypes.DATE
       },
-      reference: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      sessionId: {
-        allowNull: false,
-        type: DataTypes.UUID,
+      endDate: {
+        allowNull: true,
+        type: DataTypes.DATE
       },
       isActive: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: true
+        defaultValue: false
+      },
+      details: {
+        type: DataTypes.JSON,
+        allowNull: true,
       },
       deleted: {
         allowNull: false,
@@ -58,10 +53,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "Payments",
+      modelName: "Session",
       freezeTableName: true,
     }
   );
 
-  return Payments;
+  return Session;
 };

@@ -5,7 +5,7 @@ const { generateRandomCharacters, formatPhone } = require("../utils/helpers");
  * @class
  *
  */
-class User {
+class UserSchema {
   /**
    * @param {string} firstname
    * @param {string} lastname
@@ -43,4 +43,4 @@ class User {
   }
 }
 
-module.exports = User;
+module.exports = UserSchema;

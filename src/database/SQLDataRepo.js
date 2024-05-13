@@ -3,7 +3,7 @@ const models = require("../../models/index");
 const patterns = require("../constants/patterns");
 const googleService = require("../utils/googleServices");
 const hash = require("../utils/hash");
-const { User, Payments } = models;
+const { User, Payments, Session } = models;
 
 const DataRepo = function () {
   return {
@@ -96,37 +96,148 @@ const DataRepo = function () {
     /**
      * Adds a new payment record
      * @param {{
+     * payId: string;
      * userId: string;
+     * sessionId: string;
      * reference: string;
+     * amount: string | number;
      * isActive: boolean;
      * deleted: boolean;
+     * createdAt: Date;
+     * updatedAt: Date;
      * }} payload
      * @returns
      */
-    async createPaymentRecord({ userId, reference, isActive = true, deleted }) {
+    async createPaymentRecord({
+      payId,
+      createdAt,
+      updatedAt,
+      isActive = true,
+      ...restOfPayload
+    }) {
       return Payments.create({
-        userId,
-        reference,
         isActive,
-        deleted,
+        ...restOfPayload,
       });
     },
 
     /**
      * Finds a payment record
      * @param {string} reference
-     * @param {string | null} [userId=null] 
+     * @param {string | null} [userId=null]
+     * @param {string} [sessionId]
      * @returns
      */
-    async fetchOnePayment(reference, userId) {
+    async fetchOnePayment(reference, userId, sessionId) {
+      const filterConditions = {};
+
+      if (userId) {
+        filterConditions.userId = userId;
+      }
+
+      if (sessionId) {
+        filterConditions.sessionId = sessionId;
+      }
+
       return Payments.findOne({
         where: {
-          userId,
+          ...filterConditions,
           [Op.or]: this.UUIDOrStringTypeConditionSelector(
             reference,
             [{ reference }],
             [{ userId: reference }, { payId: reference }]
           ),
+        },
+      });
+    },
+
+    /**
+     * Finds all payment record
+     * @param {{}} filters
+     * @param {string} [userId]
+     * @returns
+     */
+    async fetchAllPayments(filters, userId) {
+      const filterConditions = {};
+
+      if (userId) {
+        filterConditions.userId = userId;
+      }
+
+      if (filters?.sessionId) {
+        filterConditions.sessionId = filters?.sessionId;
+      }
+
+      const offset = filters.page < 1 ? 1 : filters.page - 1;
+      const { limit } = filters;
+
+      return Payments.findAndCountAll({
+        where: {
+          ...filterConditions,
+        },
+        include: [
+          {
+            model: "User",
+            attributes: { exclude: ["password"] },
+          },
+        ],
+        limit:
+          limit && typeof limit === "number" && !Number.isNaN(limit)
+            ? limit
+            : undefined,
+        offset: offset * (limit || 1),
+      });
+    },
+
+    /**
+     * Adds a new session record
+     * @param {{
+     * sessionId: string;
+     * title: string;
+     * startDate?: Date;
+     * endDate?: Date;
+     * details?: string;
+     * isActive: boolean;
+     * deleted: boolean;
+     * createdAt: Date;
+     * updatedAt: Date;
+     * }} payload
+     * @returns
+     */
+    async addNewSession({
+      sessionId,
+      createdAt,
+      updatedAt,
+      isActive = true,
+      ...restOfPayload
+    }) {
+      return Session.create({
+        isActive,
+        ...restOfPayload,
+      });
+    },
+
+    /**
+     * Finds a session record
+     * @param {string} sessionId
+     * @returns
+     */
+    async fetchOneSession(sessionId) {
+      return Session.findOne({
+        where: {
+          sessionId,
+        },
+      });
+    },
+
+    /**
+     * Finds the most recent session record
+     * @returns
+     */
+    async fetchCurrentSession() {
+      return Session.findOne({
+        where: {
+          isActive: true,
         },
       });
     },

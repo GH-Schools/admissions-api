@@ -1,4 +1,4 @@
-const User = require("../schemas/User");
+const User = require("../schemas/UserSchema");
 const { UserVerificationMailContent } = require("../views/HtmlViews");
 const {
   hash,
@@ -13,17 +13,18 @@ const {
 
 const Controllers = function () {
   const extractUserInfo = (user) => ({
-    userId: user.userId,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
-    mobile: user.mobile,
-    hasVerifiedEmail: user.hasVerifiedEmail,
-    hasVerifiedPhone: user.hasVerifiedPhone,
-    emailVerificationToken: user.emailVerificationToken,
-    isActive: user.isActive,
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt,
+    userId: user.userId ?? user.UserID,
+    firstName: user.firstName ?? user.FirstName,
+    lastName: user.lastName ?? user.LastName,
+    email: user.email ?? user.Email,
+    mobile: user.mobile ?? user.Mobile,
+    hasVerifiedEmail: user.hasVerifiedEmail ?? user.HasVerifiedEmail,
+    hasVerifiedPhone: user.hasVerifiedPhone ?? user.HasVerifiedPhone,
+    emailVerificationToken:
+      user.emailVerificationToken ?? user.EmailVerificationToken,
+    isActive: user.isActive ?? user.IsActive,
+    createdAt: user.createdAt ?? user.CreatedAt,
+    updatedAt: user.updatedAt ?? user.UpdatedAt,
   });
 
   return {
@@ -54,7 +55,7 @@ const Controllers = function () {
 
         const payload = userWithPhone?.toJSON
           ? extractUserInfo(userWithPhone.toJSON())
-          : userWithPhone;
+          : extractUserInfo(userWithPhone);
 
         const token = createHashedToken(payload);
 

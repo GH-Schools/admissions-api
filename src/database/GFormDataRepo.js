@@ -68,10 +68,11 @@ const DataRepo = function () {
     /**
      * Finds a user
      * @param {string} searchParam
+     * @param {string} [auth]
      * @returns
      */
-    async fetchOneUser(searchParam) {
-      const auth = await googleService.getAuthToken();
+    async fetchOneUser(searchParam, auth) {
+      auth = auth ?? (await googleService.getAuthToken());
       const response = await googleService.getSpreadSheetValues({
         auth,
         sheetName: "UserInfo",
@@ -91,28 +92,52 @@ const DataRepo = function () {
     },
 
     /**
-     * Adds a new user
+     * Adds a new payment record
      * @param {{
      * payId: string;
      * userId: string;
+     * sessionId: string;
      * reference: string;
+     * amount: string | number;
      * isActive: boolean;
      * deleted: boolean;
+     * createdAt: Date;
+     * updatedAt: Date;
      * }} payload
+     * @param {string} [auth] google auth string
      * @returns
      */
-    async createPaymentRecord({
-      payId,
-      userId,
-      reference,
-      isActive,
-      deleted,
-    }) {
-      const auth = await googleService.getAuthToken();
+    async createPaymentRecord(
+      {
+        payId,
+        userId,
+        amount,
+        sessionId,
+        reference,
+        isActive,
+        deleted,
+        createdAt,
+        updatedAt,
+      },
+      auth
+    ) {
+      auth = auth ?? (await googleService.getAuthToken());
       const response = await googleService.appendToSpreadSheetValues({
         auth,
         sheetName: "PaymentRefs",
-        values: [[payId, userId, reference, isActive, deleted]],
+        values: [
+          [
+            payId,
+            userId,
+            amount,
+            reference,
+            sessionId,
+            isActive,
+            deleted,
+            createdAt,
+            updatedAt,
+          ],
+        ],
       });
       return response?.data?.updates?.updatedRows;
     },
@@ -120,9 +145,11 @@ const DataRepo = function () {
     /**
      * Finds a payment record
      * @param {string} reference
+     * @param {string} [userId]
+     * @param {string} [sessionId]
      * @returns
      */
-    async fetchOnePayment(reference) {
+    async fetchOnePayment(reference, userId, sessionId) {
       const auth = await googleService.getAuthToken();
       const response = await googleService.getSpreadSheetValues({
         auth,
@@ -133,10 +160,180 @@ const DataRepo = function () {
         const { values } = response.data;
         const payments = googleService.mapValuesToObject(values);
         return payments.find((payment) => {
-          return [payment["PayId"], payment["Reference"], payment["UserID"]].includes(
-            reference
+          let filterCondition = true;
+
+          if (userId) {
+            filterCondition &&= payment["UserID"] === userId;
+          }
+
+          if (sessionId) {
+            filterCondition &&= payment["SessionID"] === sessionId;
+          }
+
+          // console.log({
+          //   reference,
+          //   userId,
+          //   sessionId,
+          //   payment,
+          //   a: filterCondition,
+          //   b: [
+          //     payment["PayID"],
+          //     payment["Reference"],
+          //     payment["UserID"],
+          //   ].includes(reference),
+          // });
+
+          return (
+            filterCondition &&
+            [
+              payment["PayID"],
+              payment["Reference"],
+              payment["UserID"],
+            ].includes(reference)
           );
         });
+      }
+
+      return response?.data;
+    },
+
+    /**
+     * Finds all payment record
+     * @param {{}} filters
+     * @param {string} [userId]
+     * @returns
+     */
+    async fetchAllPayments(filters, userId) {
+      const context = this;
+      const auth = await googleService.getAuthToken();
+      const response = await googleService.getSpreadSheetValues({
+        auth,
+        sheetName: "PaymentRefs",
+      });
+
+      if (response?.data) {
+        const { values } = response.data;
+        const payments = googleService.mapValuesToObject(values);
+        let rows = payments.filter((payment) => {
+          let filterCondition = true;
+
+          if (userId) {
+            filterCondition &&= payment["UserID"] === userId;
+          }
+
+          if (filters?.sessionId) {
+            filterCondition &&= payment["SessionID"] === filters?.sessionId;
+          }
+
+          return filterCondition;
+        });
+
+        rows = await Promise.all(
+          rows.map(async (payment) => {
+            const userInfo = await context.fetchOneUser(payment.UserID, auth);
+
+            if (userInfo) {
+              delete userInfo?.Password
+            }
+            
+            return {
+              ...payment,
+              User: userInfo
+            };
+          })
+        );
+
+        return { rows, count: payments.length };
+      }
+
+      return response?.data;
+    },
+
+    /**
+     * Adds a new session record
+     * @param {{
+     * sessionId: string;
+     * title: string;
+     * startDate?: Date;
+     * endDate?: Date;
+     * details?: string;
+     * isActive: boolean;
+     * deleted: boolean;
+     * createdAt: Date;
+     * updatedAt: Date;
+     * }} payload
+     * @returns
+     */
+    async addNewSession({
+      sessionId,
+      startDate,
+      endDate,
+      title,
+      details,
+      isActive,
+      deleted,
+      createdAt,
+      updatedAt,
+    }) {
+      const auth = await googleService.getAuthToken();
+      const response = await googleService.appendToSpreadSheetValues({
+        auth,
+        sheetName: "Sessions",
+        values: [
+          [
+            sessionId,
+            title,
+            startDate,
+            endDate,
+            isActive,
+            details,
+            deleted,
+            createdAt,
+            updatedAt,
+          ],
+        ],
+      });
+      return response?.data?.updates?.updatedRows;
+    },
+
+    /**
+     * Finds a session record
+     * @param {string} sessionId
+     * @returns
+     */
+    async fetchOneSession(sessionId) {
+      const auth = await googleService.getAuthToken();
+      const response = await googleService.getSpreadSheetValues({
+        auth,
+        sheetName: "Sessions",
+      });
+
+      if (response?.data) {
+        const { values } = response.data;
+        const sessions = googleService.mapValuesToObject(values);
+        return sessions.find((session) => {
+          return [session["SessionID"]].includes(sessionId);
+        });
+      }
+
+      return response?.data;
+    },
+
+    /**
+     * Finds the most recent session record
+     * @returns
+     */
+    async fetchCurrentSession() {
+      const auth = await googleService.getAuthToken();
+      const response = await googleService.getSpreadSheetValues({
+        auth,
+        sheetName: "Sessions",
+      });
+
+      if (response?.data) {
+        const { values } = response.data;
+        const sessions = googleService.mapValuesToObject(values);
+        return sessions.filter((session) => session.IsActive).pop();
       }
 
       return response?.data;

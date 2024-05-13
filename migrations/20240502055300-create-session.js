@@ -5,35 +5,38 @@ const { UUIDV4 } = require('sequelize');
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Payments', {
+    await queryInterface.createTable('Session', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      payId: {
+      sessionId: {
         type: Sequelize.UUID,
         defaultValue: UUIDV4,
         unique: true,
       },
-      userId: {
+      title: {
         allowNull: false,
-        type: Sequelize.UUID,
-        references: {
-          model: 'User',
-          key: 'userId',
-          as: 'userId'
-        }
+        type: Sequelize.STRING
       },
-      reference: {
-        type: Sequelize.STRING,
-        allowNull: false,
+      startDate: {
+        allowNull: true,
+        type: Sequelize.DATE
+      },
+      endDate: {
+        allowNull: true,
+        type: Sequelize.DATE
       },
       isActive: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        defaultValue: true
+        defaultValue: false
+      },
+      details: {
+        type: Sequelize.JSON,
+        allowNull: true,
       },
       deleted: {
         allowNull: false,
@@ -51,6 +54,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Payments');
+    await queryInterface.dropTable('Session');
   }
 };

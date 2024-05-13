@@ -9,8 +9,9 @@ module.exports = {
       .replace(/\s+/g, " ")
       .split(" ")
       .map(
-        (eachWord) => eachWord.substring(0, 1).toUpperCase()
-          + eachWord.substring(1).toLowerCase()
+        (eachWord) =>
+          eachWord.substring(0, 1).toUpperCase() +
+          eachWord.substring(1).toLowerCase()
       )
       .join(" ");
     // this.print({ string, output });
@@ -18,7 +19,7 @@ module.exports = {
   },
 
   formatPhone(mobile) {
-    return mobile ? mobile.replace(/(\+234)|(\+233)/g, "0") : null
+    return mobile ? mobile.replace(/(\+234)|(\+233)/g, "0") : null;
   },
 
   /**
@@ -86,5 +87,79 @@ module.exports = {
     }
 
     return randomChar;
+  },
+
+  mapAsFilters(requestQuery = {}) {
+    const returnedValue = {
+      page: 1,
+      limit: 20,
+      fromDate: new Date(1970, 0, 1),
+      toDate: new Date(),
+      sortBy: [["createdAt", "desc"]],
+    };
+
+    const transformers = {
+      page: (val) => {
+        val = Number(val);
+        return {
+          key: "page",
+          value: val,
+        };
+      },
+      limit: (val) => {
+        val = Number(val);
+        return {
+          key: "limit",
+          value: val,
+        };
+      },
+      fromDate: (val) => {
+        val = new Date(val);
+        return {
+          key: "fromDate",
+          value: val,
+        };
+      },
+      toDate: (val) => {
+        val = new Date(`${val} 23:59:59`);
+        return {
+          key: "toDate",
+          value: val,
+        };
+      },
+      role: (val) => {
+        val = val.split(",");
+        val = val.map((a) => a.toUpperCase());
+        return {
+          key: "role",
+          value: val,
+        };
+      },
+      minAmount: (val) => {
+        val = Number(val);
+        return {
+          key: "minAmount",
+          value: val,
+        };
+      },
+      maxAmount: (val) => {
+        val = Number(val);
+        return {
+          key: "maxAmount",
+          value: val,
+        };
+      },
+    };
+
+    Object.entries(requestQuery).forEach(([key, value]) => {
+      if (key in transformers) {
+        const result = transformers[key](value);
+        returnedValue[result.key] = result.value;
+      } else {
+        returnedValue[key] = value;
+      }
+    });
+
+    return returnedValue;
   },
 };
