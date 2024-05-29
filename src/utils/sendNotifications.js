@@ -59,7 +59,7 @@ const sendEmailWithMailGunPackage = async (payload, withCC = true) => {
     const res = await client.messages.create(DOMAIN, messageData);
     return res;
   } catch (error) {
-    print(error, { type: "error" });
+    console.error(error);
     return error;
   }
 };

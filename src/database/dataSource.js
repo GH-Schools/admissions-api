@@ -28,6 +28,16 @@ const DataSource = function (dataRepo) {
     },
 
     /**
+     * Updates a user
+     * @param {string} userId
+     * @param {{}} payload
+     * @returns
+     */
+     async updateUser(userId, payload) {
+      return dataRepo.updateUser(userId, payload);
+    },
+
+    /**
      * Adds a new payment record
      * @param {import('../schemas/PaymentSchema')} payload
      * @returns
@@ -75,6 +85,24 @@ const DataSource = function (dataRepo) {
       return sessionId
         ? dataRepo.fetchOneSession(sessionId)
         : dataRepo.fetchCurrentSession();
+    },
+
+    /**
+     * Adds a new admission form record
+     * @param {import('../schemas/AdmissionFormsSchema')} payload
+     * @returns
+     */
+    async saveAdmissionForm(payload) {
+      return dataRepo.saveAdmissionForm(payload);
+    },
+
+    /**
+     * Finds an admission record
+     * @param {string} searchParam
+     * @returns
+     */
+    async fetchOneAdmissionForm(searchParam) {
+      return dataRepo.fetchOneAdmissionForm(searchParam)
     },
   };
 };

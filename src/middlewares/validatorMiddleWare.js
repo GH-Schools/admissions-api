@@ -102,33 +102,6 @@ const validatorMiddleWare = {
     body("dailyLimit").optional().trim().escape().isNumeric().toFloat(),
   ],
 
-  optionalGameValidation: [
-    body("tenantId").optional(),
-    body("startTime").optional(),
-    body("mrf")
-      .optional()
-      .isAlphanumeric()
-      .withMessage("mrf can only contain alphabets and numbers")
-      .isLength({ min: 5, max: 5 })
-      .withMessage("mrf must be 5 characters")
-      .toUpperCase(),
-    body("totalFundPool")
-      .optional()
-      .isNumeric()
-      .withMessage("Expected numeric value")
-      .toFloat(),
-    body("alternateStartDate")
-      .optional()
-      .custom((value) => {
-        const isISODateString =
-          !!value &&
-          value.match(PatternTemplates.iso_string_date_pattern) !== null;
-        return isISODateString;
-      })
-      .withMessage("alternateStartDate must be in ISO date format")
-      .trim(),
-  ],
-
   /**
    * @param {string} aliasedName
    * @returns Any

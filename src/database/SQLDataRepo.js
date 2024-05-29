@@ -1,9 +1,10 @@
 const { Op } = require("sequelize");
+// const admissionforms = require("../../models/admissionforms");
 const models = require("../../models/index");
 const patterns = require("../constants/patterns");
 const googleService = require("../utils/googleServices");
 const hash = require("../utils/hash");
-const { User, Payments, Session } = models;
+const { User, Payments, Session, AdmissionForms } = models;
 
 const DataRepo = function () {
   return {
@@ -90,6 +91,19 @@ const DataRepo = function () {
             [{ userId: searchParam }]
           ),
         },
+      });
+    },
+
+    /**
+     * Updates a user
+     * @param {string} userId
+     * @param {{}} payload
+     * @returns
+     */
+    async updateUser(userId, payload) {
+      return User.update(payload, {
+        where: { userId },
+        returning: true,
       });
     },
 
@@ -238,6 +252,45 @@ const DataRepo = function () {
       return Session.findOne({
         where: {
           isActive: true,
+        },
+      });
+    },
+
+    /**
+     * Adds a new admission form record
+     * @param {{
+     * sessionId: string;
+     * title: string;
+     * startDate?: Date;
+     * endDate?: Date;
+     * details?: string;
+     * isActive: boolean;
+     * deleted: boolean;
+     * createdAt: Date;
+     * updatedAt: Date;
+     * }} payload
+     * @returns
+     */
+    async saveAdmissionForm({
+      sessionId,
+      createdAt,
+      updatedAt,
+      ...restOfPayload
+    }) {
+      return AdmissionForms.create({
+        ...restOfPayload,
+      });
+    },
+
+    /**
+     * Finds an admission record
+     * @param {string} searchParam
+     * @returns
+     */
+    async fetchOneAdmissionForm(searchParam) {
+      return AdmissionForms.findOne({
+        where: {
+          [Op.or]: [{ sessionId: searchParam }, { formId: searchParam }],
         },
       });
     },

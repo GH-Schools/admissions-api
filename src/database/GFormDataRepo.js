@@ -92,6 +92,33 @@ const DataRepo = function () {
     },
 
     /**
+     * Updates a user
+     * @param {string} userId
+     * @param {{}} payload
+     * @param {string} [auth]
+     * @returns
+     */
+    async updateUser(userId, payload, auth) {
+      auth = auth ?? (await googleService.getAuthToken());
+      const response = await googleService.getSpreadSheetValues({
+        auth,
+        sheetName: "UserInfo",
+      });
+
+      if (response?.data) {
+        const { values } = response.data;
+        const users = googleService.mapValuesToObject(values);
+        return users.find((user) => {
+          return [user["Email"], user["Mobile"], user["UserID"]].includes(
+            userId
+          );
+        });
+      }
+
+      return response?.data;
+    },
+
+    /**
      * Adds a new payment record
      * @param {{
      * payId: string;
@@ -233,12 +260,12 @@ const DataRepo = function () {
             const userInfo = await context.fetchOneUser(payment.UserID, auth);
 
             if (userInfo) {
-              delete userInfo?.Password
+              delete userInfo?.Password;
             }
-            
+
             return {
               ...payment,
-              User: userInfo
+              User: userInfo,
             };
           })
         );
@@ -334,6 +361,70 @@ const DataRepo = function () {
         const { values } = response.data;
         const sessions = googleService.mapValuesToObject(values);
         return sessions.filter((session) => session.IsActive).pop();
+      }
+
+      return response?.data;
+    },
+
+    /**
+     * Adds a new admission form record
+     * @param {{
+     * sessionId: string;
+     * title: string;
+     * startDate?: Date;
+     * endDate?: Date;
+     * details?: string;
+     * isActive: boolean;
+     * deleted: boolean;
+     * createdAt: Date;
+     * updatedAt: Date;
+     * }} payload
+     * @returns
+     */
+    async saveAdmissionForm({
+      formId,
+      createdAt,
+      updatedAt,
+      ...restOfPayload
+    }) {
+      const auth = await googleService.getAuthToken();
+      const response = await googleService.appendToSpreadSheetValues({
+        auth,
+        sheetName: "AdmissionForms",
+        values: [
+          [
+            formId,
+            title,
+            startDate,
+            endDate,
+            details,
+            deleted,
+            createdAt,
+            updatedAt,
+          ],
+        ],
+      });
+      return response?.data?.updates?.updatedRows;
+    },
+
+    /**
+     * Finds an admission record
+     * @param {string} searchParam
+     * @returns
+     */
+    async fetchOneAdmissionForm(searchParam) {
+      const auth = await googleService.getAuthToken();
+      const response = await googleService.getSpreadSheetValues({
+        auth,
+        sheetName: "AdmissionForms",
+      });
+
+      if (response?.data) {
+        const { values } = response.data;
+        const forms = googleService.mapValuesToObject(values);
+        return forms.find((form) => {
+          return [form["SessionID"], form["FormID"]].includes(searchParam);
+        });
       }
 
       return response?.data;

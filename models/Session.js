@@ -14,6 +14,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "sessionId",
         sourceKey: "sessionId",
       });
+
+      Session.hasMany(models.AdmissionForms, {
+        foreignKey: "sessionId",
+        sourceKey: "sessionId",
+      });
     }
   }
 

@@ -1,4 +1,6 @@
-"use strict";
+const { v4 } = require("uuid");
+
+const uuidv4 = v4;
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -24,6 +26,7 @@ module.exports = {
       "Session",
       [
         {
+          sessionId: uuidv4(),
           title: `${lastYear}/${currentYear}`,
           isActive: true,
           createdAt: currentDate,

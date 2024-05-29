@@ -1,10 +1,14 @@
 const User = require("../schemas/UserSchema");
-const { UserVerificationMailContent } = require("../views/HtmlViews");
+const {
+  UserVerificationMailContent,
+  ResetPasswordMailContent,
+} = require("../views/HtmlViews");
 const {
   hash,
   dataSource,
   StatusCodes,
   createHashedToken,
+  verifyHashedToken,
   sendErrorResponse,
   sendSuccessResponse,
   sendEmail,
@@ -122,6 +126,116 @@ const Controllers = function () {
           message: "Successful",
           payload: response,
           onboarded: false,
+        });
+      } catch (error) {
+        return next(error);
+      }
+    },
+
+    async resetPassword(req, res, next) {
+      try {
+        const { mobile } = req.body;
+
+        const userWithPhone = await dataSource.fetchOneUser(
+          formatPhone(mobile)
+        );
+        if (!userWithPhone) {
+          return sendErrorResponse(
+            res,
+            StatusCodes.BAD_REQUEST,
+            "User with that phone number does not exist"
+          );
+        }
+
+        const payload = {
+          userId: userWithPhone.userId ?? userWithPhone?.UserID,
+        };
+
+        const passwordResetLink = `${process.env.APP_BASE_URL}/recover-password?token=${createHashedToken(
+          payload,
+          "3h"
+        )}`;
+
+        const emailRes = await sendEmail({
+          receipientEmail: userWithPhone?.email ?? userWithPhone?.Email,
+          subject: "Reset Password Confirmation",
+          content: ResetPasswordMailContent(
+            `${userWithPhone?.firstName ?? userWithPhone?.FirstName} ${
+              userWithPhone?.lastName ?? userWithPhone?.LastName
+            }`,
+            passwordResetLink
+          ),
+        });
+
+        return sendSuccessResponse(res, StatusCodes.OK, {
+          message: "Email sent successfully",
+          payload: {
+            emailRes,
+            link: passwordResetLink
+          }
+        });
+      } catch (error) {
+        return next(error);
+      }
+    },
+
+    /**
+     *
+     * @method
+     * @param {Request} req
+     * @param {Response} res
+     * @param {Function} next
+     * @returns Response
+     */
+    async completePasswordReset(req, res, next) {
+      try {
+        let payload = null;
+        const { newPassword, token } = req.body;
+
+        try {
+          payload = verifyHashedToken(token, "3h");
+        } catch (error) {
+          console.error(error);
+          return sendErrorResponse(
+            res,
+            StatusCodes.BAD_REQUEST,
+            "Invalid token"
+          );
+        }
+
+        console.log(payload);
+
+        const userId = payload?.userId ?? payload?.UserID;
+        if (!payload || !userId) {
+          return sendErrorResponse(
+            res,
+            StatusCodes.BAD_REQUEST,
+            "Invalid token"
+          );
+        }
+
+        const validUser = await dataSource.fetchOneUser(userId);
+        if (!validUser) {
+          return sendErrorResponse(
+            res,
+            StatusCodes.NOT_FOUND,
+            "User not found"
+          );
+        }
+
+        const passwordUpdateResult = await dataSource.updateUser(userId, {
+          password: hash.encryptV2(newPassword),
+        });
+        if (!passwordUpdateResult) {
+          return sendErrorResponse(
+            res,
+            StatusCodes.INTERNAL_SERVER,
+            "An error occured"
+          );
+        }
+
+        return sendSuccessResponse(res, StatusCodes.OK, {
+          message: "Password Reset Successfully",
         });
       } catch (error) {
         return next(error);

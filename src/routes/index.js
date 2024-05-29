@@ -23,6 +23,22 @@ router.post(
   controllers.registerUser
 );
 
+router.post(
+  "/auth/reset-password",
+  apikeyMid,
+  validatorMiddleWare.selectValidation("mobile"),
+  validatorMiddleWare.validateRequest,
+  controllers.resetPassword
+);
+
+router.put(
+  "/auth/complete-password-reset",
+  validatorMiddleWare.selectValidation("token"),
+  validatorMiddleWare.validatePasswordUpdate,
+  validatorMiddleWare.validateRequest,
+  controllers.completePasswordReset
+);
+
 router.get(
   "/get-profile",
   apikeyMid,
@@ -75,6 +91,30 @@ router.get(
   "/session/get-current-session",
   apikeyMid,
   controllers.getCurrentSession
+);
+
+// ADMISSIONS
+router.post(
+  "/admissions/new-form",
+  apikeyMid,
+  authMid,
+  validatorMiddleWare.selectValidation("title"),
+  validatorMiddleWare.validateRequest,
+  controllers.newAdmission
+);
+
+router.get(
+  "/admissions/get-all-forms",
+  apikeyMid,
+  authMid,
+  controllers.getAdmissionForm
+);
+
+router.get(
+  "/admissions/get-admissions-form/:searchParam",
+  apikeyMid,
+  authMid,
+  controllers.getAdmissionForm
 );
 
 module.exports = router;
