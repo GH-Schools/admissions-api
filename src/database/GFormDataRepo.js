@@ -20,7 +20,9 @@ const DataRepo = function () {
      * email: string;
      * password: string;
      * hasVerifiedEmail: boolean;
+     * emailVerificationToken: string;
      * hasVerifiedPhone: boolean;
+     * phoneVerificationToken: string;
      * }} payload
      * @returns
      */
@@ -34,6 +36,7 @@ const DataRepo = function () {
       hasVerifiedEmail = false,
       emailVerificationToken,
       hasVerifiedPhone = false,
+      phoneVerificationToken,
       isActive = true,
       deleted,
       createdAt,
@@ -47,14 +50,25 @@ const DataRepo = function () {
           [
             userId,
             firstName,
+            "",
             lastName,
             email,
             mobile,
+            "",
             password,
             hasVerifiedEmail,
             emailVerificationToken,
             hasVerifiedPhone,
+            phoneVerificationToken,
+            "",
+            "",
+            "",
             isActive,
+            "",
+            false,
+            "",
+            false,
+            "",
             deleted,
             createdAt,
             updatedAt,

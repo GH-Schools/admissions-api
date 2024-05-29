@@ -12,7 +12,54 @@ const Controllers = function () {
   return {
     async newAdmission(req, res, next) {
       try {
-        const { title, startDate, endDate, extraDetails = [] } = req.body;
+        const {
+          userId,
+          sessionId,
+          reference,
+          firstName,
+          middleName,
+          lastName,
+          email,
+          passportPhoto,
+          residentialAddress,
+          regionOfResidence,
+          sex,
+          dob,
+          nationality,
+          mobile1,
+          mobile2,
+          nationalIDType,
+          nationalIDNumber,
+          currentJob,
+          language,
+          nameOfSchoolAttended1,
+          locationOfSchoolAttended1,
+          yearAttended1,
+          qualification1,
+          nameOfSchoolAttended2,
+          locationOfSchoolAttended2,
+          yearAttended2,
+          qualification2,
+          nameOfSchoolAttended3,
+          locationOfSchoolAttended3,
+          yearAttended3,
+          qualification3,
+          preferredCourse,
+          session,
+          preferHostel,
+          hasMedicalCondition,
+          medicalCondition,
+          hasDisability,
+          disability,
+          source,
+          priorExperience,
+          priorExperienceSpecialization,
+          sponsorName,
+          sponsorRelationship,
+          sponsorOccupation,
+          sponsorAddress,
+          sponsorMobile,
+        } = req.body;
 
         const newForm = new AdmissionFormsSchema(
           title,
@@ -40,7 +87,7 @@ const Controllers = function () {
 
     async getAdmissionForm(req, res, next) {
       try {
-        const { searchParam } = req.params
+        const { searchParam } = req.params;
         const form = await dataSource.fetchOneAdmissionForm(searchParam);
         if (!form) {
           return sendErrorResponse(

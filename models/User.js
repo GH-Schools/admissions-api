@@ -33,6 +33,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      middleName: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       lastName: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -62,6 +66,18 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      sex: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      dob: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      nationality: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       isActive: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
@@ -69,6 +85,24 @@ module.exports = (sequelize, DataTypes) => {
       role: {
         type: DataTypes.STRING,
         allowNull: false,
+      },
+      hasMedicalCondition: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
+      medicalCondition: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      hasDisability: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
+      disability: {
+        type: DataTypes.STRING,
+        allowNull: true,
       },
       lastLogin: {
         type: DataTypes.DATE,

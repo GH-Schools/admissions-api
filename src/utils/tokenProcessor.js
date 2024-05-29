@@ -17,10 +17,12 @@ module.exports = {
       expiresIn,
       algorithms: ["HS256"],
     }),
-  createHashedToken: (payload, expiresIn = "1d") =>
-    hash.encrypt(
+  createHashedToken: (payload, expiresIn = "1d") => {
+    console.log(payload);
+    return hash.encrypt(
       jwt.sign(payload, `${process.env.JWT_SECRET}`, {
         expiresIn,
       })
-    ),
+    );
+  },
 };

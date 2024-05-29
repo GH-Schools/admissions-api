@@ -147,14 +147,14 @@ const Controllers = function () {
           );
         }
 
-        const payload = {
-          userId: userWithPhone.userId ?? userWithPhone?.UserID,
-        };
-
-        const passwordResetLink = `${process.env.APP_BASE_URL}/recover-password?token=${createHashedToken(
-          payload,
+        const token = createHashedToken(
+          { userId: userWithPhone.userId ?? userWithPhone?.UserID },
           "3h"
-        )}`;
+        );
+
+        console.log(token);
+
+        const passwordResetLink = `${process.env.APP_BASE_URL}/portal/password/create-new?token=${token}`;
 
         const emailRes = await sendEmail({
           receipientEmail: userWithPhone?.email ?? userWithPhone?.Email,

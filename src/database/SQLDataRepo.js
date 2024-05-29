@@ -28,9 +28,9 @@ const DataRepo = function () {
       uuidConditions
     ) {
       // const isUUID = PatternTemplates.uuidV4Pattern.test(queryParam);
-      const isUUID =
-        typeof queryParam === "string" &&
-        !!(queryParam || "").match(patterns.uuidV4Pattern);
+      const isUUID = typeof queryParam === "string"
+        && !!(queryParam || "").match(patterns.uuidV4Pattern);
+
       return isUUID ? uuidConditions : stringConditions;
     },
 

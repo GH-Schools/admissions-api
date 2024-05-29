@@ -23,6 +23,7 @@ const Controllers = function () {
           mobile,
           reference,
           amount,
+          currency
         } = req.body;
         // console.log(req.body);
 
@@ -99,7 +100,7 @@ const Controllers = function () {
 
         // CREATE A UNIQUE PAYMENT RECORD
         const response = await dataSource.createPaymentRecord(
-          new PaymentSchema(userId, sessionId, reference, amount)
+          new PaymentSchema(userId, sessionId, reference, amount, currency)
         );
 
         if (!response) {

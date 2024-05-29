@@ -11,19 +11,16 @@ class PaymentSchema {
    * @param {string} sessionId current academic session id
    * @param {string} reference
    * @param {string} amount
+   * @param {'GHC' | 'NGN'} currency
    */
-  constructor(
-    userId,
-    sessionId,
-    reference,
-    amount
-  ) {
+  constructor(userId, sessionId, reference, amount, currency = "GHC") {
     this.payId = generateRandomCharacters(6, {
       lowercase: true,
       splitBy: "-",
       splitInterval: "3",
     });
     this.amount = amount;
+    this.currency = currency;
     this.reference = reference;
     this.userId = userId;
     this.sessionId = sessionId;

@@ -21,6 +21,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      middleName: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       lastName: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -50,6 +54,27 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      hasVerifiedPhone: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      phoneVerificationToken: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      sex: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      dob: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      nationality: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       isActive: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
@@ -57,6 +82,24 @@ module.exports = {
       role: {
         type: Sequelize.STRING,
         allowNull: false,
+      },
+      hasMedicalCondition: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
+      medicalCondition: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      hasDisability: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
+      disability: {
+        type: Sequelize.STRING,
+        allowNull: true,
       },
       lastLogin: {
         type: Sequelize.DATE,

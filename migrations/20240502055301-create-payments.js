@@ -30,6 +30,11 @@ module.exports = {
         type: Sequelize.DECIMAL(16, 2),
         allowNull: false,
       },
+      currency: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: "GHC",
+      },
       reference: {
         type: Sequelize.STRING,
         allowNull: false,

@@ -37,6 +37,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DECIMAL(16, 2),
         allowNull: false,
       },
+      currency: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: "GHC",
+      },
       reference: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -48,7 +53,7 @@ module.exports = (sequelize, DataTypes) => {
       isActive: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: true
+        defaultValue: true,
       },
       deleted: {
         allowNull: false,

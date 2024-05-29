@@ -39,12 +39,7 @@ router.put(
   controllers.completePasswordReset
 );
 
-router.get(
-  "/get-profile",
-  apikeyMid,
-  authMid,
-  controllers.getUserProfile
-);
+router.get("/get-profile", apikeyMid, authMid, controllers.getUserProfile);
 
 router.get(
   "/payment/get-my-payments",
@@ -72,7 +67,13 @@ router.post(
 router.post(
   "/payment/success-webhook",
   apikeyMid,
-  validatorMiddleWare.selectValidation("firstName", "lastName", "mobile", "reference", "amount"),
+  validatorMiddleWare.selectValidation(
+    "firstName",
+    "lastName",
+    "mobile",
+    "reference",
+    "amount"
+  ),
   validatorMiddleWare.validateRequest,
   controllers.paymentWebhook
 );
@@ -98,7 +99,52 @@ router.post(
   "/admissions/new-form",
   apikeyMid,
   authMid,
-  validatorMiddleWare.selectValidation("title"),
+  validatorMiddleWare.selectValidation(
+    "firstName",
+    "middleName",
+    "lastName",
+    "email",
+    "passportPhoto",
+    "residentialAddress",
+    "regionOfResidence",
+    "sex",
+    "dob",
+    "nationality",
+    "mobile1",
+    "mobile2",
+    "nationalIDType",
+    "nationalIDNumber",
+    "currentJob",
+    "language",
+    "nameOfSchoolAttended1",
+    "locationOfSchoolAttended1",
+    "yearAttended1",
+    "qualification1",
+    "nameOfSchoolAttended2",
+    "locationOfSchoolAttended2",
+    "yearAttended2",
+    "qualification2",
+    "nameOfSchoolAttended3",
+    "locationOfSchoolAttended3",
+    "yearAttended3",
+    "qualification3",
+    "preferredCourse",
+    "session",
+    "preferHostel",
+    "hasMedicalCondition",
+    "medicalCondition",
+    "hasDisability",
+    "disability",
+    "source",
+    "priorExperience",
+    "priorExperienceSpecialization",
+    "sponsorName",
+    "sponsorRelationship",
+    "sponsorOccupation",
+    "sponsorAddress",
+    "sponsorMobile",
+    "reference",
+  ),
   validatorMiddleWare.validateRequest,
   controllers.newAdmission
 );
