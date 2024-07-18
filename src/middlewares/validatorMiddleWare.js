@@ -22,8 +22,8 @@ const validatorMiddleWare = {
       .withMessage("Unacceptable character '--' found"),
     body("password")
       .trim()
-      .isLength({ min: 8 })
-      .withMessage("passwords length must be between 8 to 24")
+      .isLength({ min: 6 })
+      .withMessage("passwords length must be between 6 to 24")
       .custom(sqlInjectionValidator)
       .withMessage("Unacceptable character '--' found")
   ],
@@ -50,8 +50,8 @@ const validatorMiddleWare = {
   validatePasswordUpdate: [
     body("newPassword")
       .trim()
-      .isLength({ min: 8 })
-      .withMessage("passwords length must be between 8 to 24")
+      .isLength({ min: 6 })
+      .withMessage("passwords length must be between 6 to 24")
       .custom(sqlInjectionValidator)
       .withMessage("Unacceptable character '--' found"),
     body("confirmPassword")
@@ -144,8 +144,6 @@ const validatorMiddleWare = {
     // Defines conditions for parameter to be an alias of name
     const isUuidAlias =
       aliasedName.toLowerCase() === "userid" ||
-      aliasedName.toLowerCase() === "gameid" ||
-      aliasedName.toLowerCase() === "lotteryid" ||
       aliasedName.toLowerCase() === "adminid";
 
     // Defines conditions for parameter to be an alias of name

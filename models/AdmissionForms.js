@@ -80,7 +80,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       mobile2: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       nationalIDType: {
         type: DataTypes.STRING,
@@ -100,19 +100,19 @@ module.exports = (sequelize, DataTypes) => {
       },
       nameOfSchoolAttended1: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       locationOfSchoolAttended1: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       yearAttended1: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       qualification1: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       nameOfSchoolAttended2: {
         type: DataTypes.STRING,
@@ -148,11 +148,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       preferredCourse: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       session: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       preferHostel: {
         type: DataTypes.BOOLEAN,
@@ -179,7 +179,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       source: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       priorExperience: {
         type: DataTypes.BOOLEAN,
@@ -192,23 +192,23 @@ module.exports = (sequelize, DataTypes) => {
       },
       sponsorName: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       sponsorRelationship: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       sponsorOccupation: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       sponsorAddress: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       sponsorMobile: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       paymentReference: {
         type: DataTypes.STRING,

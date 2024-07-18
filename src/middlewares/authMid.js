@@ -9,11 +9,11 @@ module.exports = async (req, res, next) => {
       return sendErrorResponse(
         res,
         statusCodes.UNAUTHORIZED,
-        "Invalid Unauthorized!"
+        "Invalid Unauthorization!"
       );
     }
 
-    const token = authorization.replace(/bearer/gi, '').trim();
+    const token = authorization.replace(/^bearer/gi, '').trim();
     const payload = verifyHashedToken(token);
 
     req.user = payload;

@@ -97,6 +97,16 @@ const DataSource = function (dataRepo) {
     },
 
     /**
+     * Update admission form
+     * @param {*} formId 
+     * @param {*} payload 
+     * @returns 
+     */
+    async updateAdmissionForm(formId, payload) {
+      return dataRepo.updateAdmissionForm(formId, payload);
+    },
+
+    /**
      * Finds an admission record
      * @param {string} searchParam
      * @returns

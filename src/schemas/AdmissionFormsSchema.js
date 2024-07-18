@@ -40,7 +40,7 @@ class AdmissionFormsSchema {
    *  yearAttended3?: string;
    *  qualification3?: string;
    *  preferredCourse: string;
-   *  session: string;
+   *  courseSession: string;
    *  preferHostel: string;
    *  hasMedicalCondition: string;
    *  medicalCondition: string;
@@ -89,7 +89,7 @@ class AdmissionFormsSchema {
     yearAttended3,
     qualification3,
     preferredCourse,
-    session,
+    courseSession,
     preferHostel,
     hasMedicalCondition,
     medicalCondition,
@@ -109,7 +109,7 @@ class AdmissionFormsSchema {
       splitBy: "-",
       splitInterval: "3",
     });
-    this.reference = reference;
+    this.paymentReference = reference;
     this.userId = userId;
     this.sessionId = sessionId;
     this.firstName = firstName;
@@ -141,7 +141,7 @@ class AdmissionFormsSchema {
     this.yearAttended3 = yearAttended3;
     this.qualification3 = qualification3;
     this.preferredCourse = preferredCourse;
-    this.session = session;
+    this.session = courseSession;
     this.preferHostel = preferHostel;
     this.hasMedicalCondition = hasMedicalCondition;
     this.medicalCondition = medicalCondition;

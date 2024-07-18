@@ -422,6 +422,37 @@ const DataRepo = function () {
     },
 
     /**
+     * Update admission form
+     * @param {*} formId 
+     * @param {*} payload 
+     * @returns 
+     */
+    async updateAdmissionForm(formId, {
+      createdAt,
+      updatedAt,
+      ...restOfPayload
+    }) {
+      const auth = await googleService.getAuthToken();
+      const response = await googleService.appendToSpreadSheetValues({
+        auth,
+        sheetName: "AdmissionForms",
+        values: [
+          [
+            formId,
+            title,
+            startDate,
+            endDate,
+            details,
+            deleted,
+            createdAt,
+            updatedAt,
+          ],
+        ],
+      });
+      return response?.data?.updates?.updatedRows;
+    },
+
+    /**
      * Finds an admission record
      * @param {string} searchParam
      * @returns

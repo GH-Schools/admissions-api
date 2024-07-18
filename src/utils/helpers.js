@@ -23,6 +23,20 @@ module.exports = {
   },
 
   /**
+   *
+   * @param {*} text
+   * @returns string
+   */
+   formatAsSlug(text) {
+    return `${text
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/[\\/]/g, "_")
+      .replace(/&/g, "and")
+      .toLowerCase()}`;
+  },
+
+  /**
    * A helper method for generating random characters with configuration options
    * @param {number} length The length of the generated string
    * @param {{

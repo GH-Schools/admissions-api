@@ -1,7 +1,11 @@
+const path = require("path");
+const appRootPath = require("app-root-path");
+
 const {
-  sendSuccessResponse,
-  StatusCodes,
   dataSource,
+  StatusCodes,
+  uploader: cloudUploader,
+  sendSuccessResponse,
   sendErrorResponse,
 } = require("./imports");
 
@@ -29,6 +33,46 @@ const Controllers = function () {
         return next(error);
       }
     },
+
+    /**
+   * @method
+   * @param {Request} req
+   * @param {Response} res
+   * @param {Function} next
+   * @returns Response
+   */
+  async upload(req, res, next) {
+    try {
+      // here
+      if (!req.file) {
+        return sendErrorResponse(
+          res,
+          HttpStatusCode.BAD_REQUEST,
+          "file parameter missing in request"
+        );
+      }
+
+      const filePath = `${appRootPath}/uploads/${req.file.filename}`;
+      const cloudResponse = await cloudUploader(filePath, req.file.filename);
+
+      if (!cloudResponse?.secure_url) {
+        return sendErrorResponse(
+          res,
+          StatusCodes.INTERNAL_SERVER,
+          cloudResponse
+        );
+      }
+      // || cloudResponse.Location
+      return sendSuccessResponse(res, StatusCodes.OK, {
+        message: "uploaded successfully",
+        data: {
+          imageUrl: cloudResponse?.secure_url,
+        },
+      });
+    } catch (error) {
+      return next(error);
+    }
+  },
   };
 };
 

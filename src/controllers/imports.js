@@ -11,6 +11,7 @@ const {
   verifyHashedToken,
 } = require("../utils/tokenProcessor");
 const { sendEmail } = require("../utils/sendNotifications");
+const { cloudinaryUpload } = require("../utils/upload");
 const { formatPhone, generateRandomCharacters } = require("../utils/helpers");
 
 const dataSource = DataSource(dataRepo);
@@ -26,4 +27,5 @@ module.exports = {
   sendErrorResponse,
   sendSuccessResponse,
   generateRandomCharacters,
+  uploader: cloudinaryUpload,
 };

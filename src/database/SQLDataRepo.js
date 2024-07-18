@@ -28,8 +28,9 @@ const DataRepo = function () {
       uuidConditions
     ) {
       // const isUUID = PatternTemplates.uuidV4Pattern.test(queryParam);
-      const isUUID = typeof queryParam === "string"
-        && !!(queryParam || "").match(patterns.uuidV4Pattern);
+      const isUUID =
+        typeof queryParam === "string" &&
+        !!(queryParam || "").match(patterns.uuidV4Pattern);
 
       return isUUID ? uuidConditions : stringConditions;
     },
@@ -272,13 +273,26 @@ const DataRepo = function () {
      * @returns
      */
     async saveAdmissionForm({
-      sessionId,
+      formId,
       createdAt,
       updatedAt,
       ...restOfPayload
     }) {
       return AdmissionForms.create({
         ...restOfPayload,
+      });
+    },
+
+    /**
+     * Updates a form
+     * @param {string} formId
+     * @param {{}} payload
+     * @returns
+     */
+    async updateAdmissionForm(formId, payload) {
+      return AdmissionForms.update(payload, {
+        where: { formId },
+        returning: true,
       });
     },
 

@@ -1,10 +1,18 @@
 const router = require("express").Router();
 const apikeyMid = require("../middlewares/apikeyMid");
 const authMid = require("../middlewares/authMid");
+const upload = require("../middlewares/multerMiddleware");
 const controllers = require("../controllers");
 const validatorMiddleWare = require("../middlewares/validatorMiddleWare");
 
 router.get("/health-check", apikeyMid, controllers.healthCheck);
+router.post(
+  "/upload",
+  apikeyMid,
+  authMid,
+  upload.single("image"),
+  controllers.upload
+);
 
 router.post(
   "/auth/login",
@@ -96,48 +104,62 @@ router.get(
 
 // ADMISSIONS
 router.post(
-  "/admissions/new-form",
+  "/admissions/save-personal-profile",
   apikeyMid,
   authMid,
   validatorMiddleWare.selectValidation(
+    "reference",
     "firstName",
     "middleName",
     "lastName",
     "email",
-    "passportPhoto",
-    "residentialAddress",
-    "regionOfResidence",
-    "sex",
-    "dob",
-    "nationality",
     "mobile1",
-    "mobile2",
-    "nationalIDType",
-    "nationalIDNumber",
+    "dob",
+    "sex",
     "currentJob",
     "language",
+    // "passportPhoto",
+    "residentialAddress",
+    "nationality",
+    "regionOfResidence",
+    "nationalIDType",
+    "nationalIDNumber",
+  ),
+  validatorMiddleWare.validateRequest,
+  controllers.saveAdmissionPersonalProfile
+);
+
+router.post(
+  "/admissions/save-education",
+  apikeyMid,
+  authMid,
+  validatorMiddleWare.selectValidation(
     "nameOfSchoolAttended1",
     "locationOfSchoolAttended1",
     "yearAttended1",
     "qualification1",
-    "nameOfSchoolAttended2",
-    "locationOfSchoolAttended2",
-    "yearAttended2",
-    "qualification2",
-    "nameOfSchoolAttended3",
-    "locationOfSchoolAttended3",
-    "yearAttended3",
-    "qualification3",
     "preferredCourse",
-    "session",
+    "courseSession",
+    "priorExperience",
+    "priorExperienceSpecialization",
+    "source",
+    "reference",
+    // "mobile2",
+  ),
+  validatorMiddleWare.validateRequest,
+  controllers.saveAdmissionFormEducation
+);
+
+router.post(
+  "/admissions/save-welfare-information",
+  apikeyMid,
+  authMid,
+  validatorMiddleWare.selectValidation(
     "preferHostel",
     "hasMedicalCondition",
     "medicalCondition",
     "hasDisability",
     "disability",
-    "source",
-    "priorExperience",
-    "priorExperienceSpecialization",
     "sponsorName",
     "sponsorRelationship",
     "sponsorOccupation",
@@ -146,7 +168,7 @@ router.post(
     "reference",
   ),
   validatorMiddleWare.validateRequest,
-  controllers.newAdmission
+  controllers.saveAdmissionWelfareInformation
 );
 
 router.get(
