@@ -124,24 +124,24 @@ const Controllers = function () {
     async saveAdmissionFormEducation(req, res, next) {
       try {
         const {
-          nameOfSchoolAttended1,
-          locationOfSchoolAttended1,
+          source,
+          reference,
+          courseSession,
           yearAttended1,
-          qualification1,
-          nameOfSchoolAttended2,
-          locationOfSchoolAttended2,
           yearAttended2,
-          qualification2,
-          nameOfSchoolAttended3,
-          locationOfSchoolAttended3,
           yearAttended3,
+          qualification1,
+          qualification2,
           qualification3,
           preferredCourse,
-          courseSession,
-          source,
           priorExperience,
+          nameOfSchoolAttended1,
+          nameOfSchoolAttended2,
+          nameOfSchoolAttended3,
+          locationOfSchoolAttended1,
+          locationOfSchoolAttended2,
+          locationOfSchoolAttended3,
           priorExperienceSpecialization,
-          reference,
           // mobile2,
         } = req.body;
 
@@ -235,45 +235,12 @@ const Controllers = function () {
       try {
         const {
           reference,
-          firstName,
-          middleName,
-          lastName,
-          email,
-          passportPhoto,
-          residentialAddress,
-          regionOfResidence,
-          sex,
-          dob,
-          nationality,
-          mobile1,
-          mobile2,
-          nationalIDType,
-          nationalIDNumber,
-          currentJob,
-          language,
-          nameOfSchoolAttended1,
-          locationOfSchoolAttended1,
-          yearAttended1,
-          qualification1,
-          nameOfSchoolAttended2,
-          locationOfSchoolAttended2,
-          yearAttended2,
-          qualification2,
-          nameOfSchoolAttended3,
-          locationOfSchoolAttended3,
-          yearAttended3,
-          qualification3,
-          preferredCourse,
-          courseSession,
-          preferHostel,
-          hasMedicalCondition,
-          medicalCondition,
-          hasDisability,
           disability,
-          source,
-          priorExperience,
-          priorExperienceSpecialization,
           sponsorName,
+          preferHostel,
+          hasDisability,
+          medicalCondition,
+          hasMedicalCondition,
           sponsorRelationship,
           sponsorOccupation,
           sponsorAddress,
@@ -314,64 +281,40 @@ const Controllers = function () {
 
         const newPayload = {
           userId,
-          sessionId,
-          reference: paymentInfo?.reference ?? paymentInfo?.Reference,
-          firstName,
-          middleName,
-          lastName,
-          email,
-          passportPhoto,
-          residentialAddress,
-          regionOfResidence,
-          sex,
-          dob,
-          nationality,
-          mobile1: formatPhone(mobile1),
-          mobile2: formatPhone(mobile2),
-          nationalIDType,
-          nationalIDNumber,
-          currentJob,
-          language,
-          nameOfSchoolAttended1,
-          locationOfSchoolAttended1,
-          yearAttended1,
-          qualification1,
-          nameOfSchoolAttended2,
-          locationOfSchoolAttended2,
-          yearAttended2,
-          qualification2,
-          nameOfSchoolAttended3,
-          locationOfSchoolAttended3,
-          yearAttended3,
-          qualification3,
-          preferredCourse,
-          courseSession,
-          preferHostel,
-          hasMedicalCondition,
-          medicalCondition,
-          hasDisability,
           disability,
-          source,
-          priorExperience,
-          priorExperienceSpecialization,
           sponsorName,
+          preferHostel,
+          hasDisability,
+          medicalCondition,
+          hasMedicalCondition,
+          reference: paymentInfo?.reference ?? paymentInfo?.Reference,
           sponsorRelationship,
           sponsorOccupation,
           sponsorAddress,
           sponsorMobile,
+          sessionId,
         };
 
         console.log(newPayload);
+        const existingForm = await dataSource.fetchOneAdmissionForm(sessionId);
         const newForm = new AdmissionFormsSchema(newPayload);
 
-        let response = await dataSource.saveAdmissionForm(newForm);
+        let response = !existingForm
+          ? await dataSource.saveAdmissionForm(newForm)
+          : await dataSource.updateAdmissionForm(
+              existingForm?.formId ?? existingForm?.FormID,
+              newPayload
+            );
+
         if (!response) {
           return sendErrorResponse(
             res,
             StatusCodes.SERVER_ERROR,
-            "An error occured while saving admission form"
+            "An error occured while saving admission form education"
           );
         }
+
+        await dataSource.updateUser(userId, newPayload);
 
         return sendSuccessResponse(res, StatusCodes.OK, {
           message: "Successful",
