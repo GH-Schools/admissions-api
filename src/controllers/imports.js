@@ -2,8 +2,8 @@ const dataRepo = require("../database/SQLDataRepo");
 const DataSource = require("../database/dataSource");
 const StatusCodes = require("../constants/statusCodes");
 const {
-  sendSuccessResponse,
   sendErrorResponse,
+  sendSuccessResponse,
 } = require("../utils/sendAPIResponses");
 const hash = require("../utils/hash");
 const {
@@ -12,7 +12,11 @@ const {
 } = require("../utils/tokenProcessor");
 const { sendEmail } = require("../utils/sendNotifications");
 const { cloudinaryUpload } = require("../utils/upload");
-const { formatPhone, generateRandomCharacters } = require("../utils/helpers");
+const {
+  formatPhone,
+  mapAsFilters,
+  generateRandomCharacters,
+} = require("../utils/helpers");
 
 const dataSource = DataSource(dataRepo);
 
@@ -22,6 +26,7 @@ module.exports = {
   StatusCodes,
   sendEmail,
   formatPhone,
+  mapAsFilters,
   createHashedToken,
   verifyHashedToken,
   sendErrorResponse,

@@ -28,13 +28,40 @@ const DataSource = function (dataRepo) {
     },
 
     /**
+     * Find all users
+     * @param {{}} filters
+     * @returns
+     */
+    async fetchAllUsers(filters) {
+      return dataRepo.fetchAllUsers(filters);
+    },
+
+    /**
      * Updates a user
      * @param {string} userId
      * @param {{}} payload
      * @returns
      */
-     async updateUser(userId, payload) {
+    async updateUser(userId, payload) {
       return dataRepo.updateUser(userId, payload);
+    },
+
+    /**
+     * Adds a new admin
+     * @param {import('../schemas/User')} payload
+     * @returns
+     */
+    async createAdmin(payload) {
+      return dataRepo.createAdmin(payload);
+    },
+
+    /**
+     * Finds a admin
+     * @param {string} searchParam
+     * @returns
+     */
+    async fetchOneAdmin(searchParam) {
+      return dataRepo.fetchOneAdmin(searchParam);
     },
 
     /**
@@ -50,7 +77,7 @@ const DataSource = function (dataRepo) {
      * Finds a payment record
      * @param {string} reference
      * @param {string} [userId]
-     * @param {string} [sessionId] 
+     * @param {string} [sessionId]
      * @returns
      */
     async fetchOnePayment(reference, userId, sessionId) {
@@ -98,9 +125,9 @@ const DataSource = function (dataRepo) {
 
     /**
      * Update admission form
-     * @param {*} formId 
-     * @param {*} payload 
-     * @returns 
+     * @param {*} formId
+     * @param {*} payload
+     * @returns
      */
     async updateAdmissionForm(formId, payload) {
       return dataRepo.updateAdmissionForm(formId, payload);
@@ -109,10 +136,21 @@ const DataSource = function (dataRepo) {
     /**
      * Finds an admission record
      * @param {string} searchParam
+     * @param {string} sessionId
      * @returns
      */
-    async fetchOneAdmissionForm(searchParam) {
-      return dataRepo.fetchOneAdmissionForm(searchParam)
+    async fetchOneAdmissionForm(searchParam, sessionId) {
+      return dataRepo.fetchOneAdmissionForm(searchParam, sessionId);
+    },
+
+    /**
+     * Finds all admission records
+     * @param {{}} filters
+     * @param {string} [userId]
+     * @returns
+     */
+     async fetchAllAdmissionForms(filters, userId) {
+      return dataRepo.fetchAllAdmissionForms(filters, userId);
     },
   };
 };

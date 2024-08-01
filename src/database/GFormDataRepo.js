@@ -106,6 +106,58 @@ const DataRepo = function () {
     },
 
     /**
+     * Find all users
+     * @param {{ role?: string }} filters
+     * @returns
+     */
+    async fetchAllUsers(filters) {
+      const context = this;
+      const auth = await googleService.getAuthToken();
+      const response = await googleService.getSpreadSheetValues({
+        auth,
+        sheetName: "UserInfo",
+      });
+
+      if (response?.data) {
+        const { values } = response.data;
+        const users = googleService.mapValuesToObject(values);
+        let rows = users.filter((user) => {
+          let filterCondition = true;
+
+          // if (userId) {
+          //   filterCondition &&= user["UserID"] === userId;
+          // }
+
+          // if (filters?.role) {
+          //   filterCondition &&= user["Role"] === filters?.sessionId;
+          // }
+
+          return filterCondition;
+        });
+
+        // Include user info
+        // rows = await Promise.all(
+        //   rows.map(async (user) => {
+        //     const userInfo = await context.fetchOneUser(user.UserID, auth);
+
+        //     if (userInfo) {
+        //       delete userInfo?.Password;
+        //     }
+
+        //     return {
+        //       ...user,
+        //       User: userInfo,
+        //     };
+        //   })
+        // );
+
+        return { rows, count: payments.length };
+      }
+
+      return response?.data;
+    },
+
+    /**
      * Updates a user
      * @param {string} userId
      * @param {{}} payload
@@ -125,6 +177,99 @@ const DataRepo = function () {
         return users.find((user) => {
           return [user["Email"], user["Mobile"], user["UserID"]].includes(
             userId
+          );
+        });
+      }
+
+      return response?.data;
+    },
+
+    /**
+     * Adds a new admin
+     * @param {{
+     * firstName: string;
+     * lastName: string;
+     * mobile: string;
+     * email: string;
+     * password: string;
+     * role: 'ADMIN';
+     * hasVerifiedEmail: boolean;
+     * emailVerificationToken: string;
+     * hasVerifiedPhone: boolean;
+     * }} payload
+     * @returns
+     */
+    async createAdmin({
+      adminId,
+      firstName,
+      lastName,
+      mobile,
+      email,
+      password,
+      hasVerifiedEmail = false,
+      emailVerificationToken,
+      hasVerifiedPhone = false,
+      phoneVerificationToken,
+      isActive = true,
+      deleted,
+      createdAt,
+      updatedAt,
+    }) {
+      const auth = await googleService.getAuthToken();
+      const response = await googleService.appendToSpreadSheetValues({
+        auth,
+        sheetName: "AdminInfo",
+        values: [
+          [
+            adminId,
+            firstName,
+            lastName,
+            email,
+            mobile,
+            "",
+            password,
+            hasVerifiedEmail,
+            emailVerificationToken,
+            hasVerifiedPhone,
+            phoneVerificationToken,
+            "",
+            "",
+            "",
+            isActive,
+            "",
+            false,
+            "",
+            false,
+            "",
+            deleted,
+            createdAt,
+            updatedAt,
+          ],
+        ],
+      });
+
+      return response?.data?.updates?.updatedRows;
+    },
+
+    /**
+     * Finds a admin
+     * @param {string} searchParam
+     * @param {string} [auth]
+     * @returns
+     */
+    async fetchOneAdmin(searchParam, auth) {
+      auth = auth ?? (await googleService.getAuthToken());
+      const response = await googleService.getSpreadSheetValues({
+        auth,
+        sheetName: "AdminInfo",
+      });
+
+      if (response?.data) {
+        const { values } = response.data;
+        const admins = googleService.mapValuesToObject(values);
+        return admins.find((admin) => {
+          return [admin["Email"], admin["Mobile"], admin["AdminID"]].includes(
+            searchParam
           );
         });
       }
@@ -423,15 +568,14 @@ const DataRepo = function () {
 
     /**
      * Update admission form
-     * @param {*} formId 
-     * @param {*} payload 
-     * @returns 
+     * @param {*} formId
+     * @param {*} payload
+     * @returns
      */
-    async updateAdmissionForm(formId, {
-      createdAt,
-      updatedAt,
-      ...restOfPayload
-    }) {
+    async updateAdmissionForm(
+      formId,
+      { createdAt, updatedAt, ...restOfPayload }
+    ) {
       const auth = await googleService.getAuthToken();
       const response = await googleService.appendToSpreadSheetValues({
         auth,
@@ -455,9 +599,10 @@ const DataRepo = function () {
     /**
      * Finds an admission record
      * @param {string} searchParam
+     * @param {string} [sessionId]
      * @returns
      */
-    async fetchOneAdmissionForm(searchParam) {
+    async fetchOneAdmissionForm(searchParam, sessionId) {
       const auth = await googleService.getAuthToken();
       const response = await googleService.getSpreadSheetValues({
         auth,
@@ -470,6 +615,58 @@ const DataRepo = function () {
         return forms.find((form) => {
           return [form["SessionID"], form["FormID"]].includes(searchParam);
         });
+      }
+
+      return response?.data;
+    },
+
+    /**
+     * Finds all admission records
+     * @param {{}} filters
+     * @param {string} [userId]
+     * @returns
+     */
+    async fetchAllAdmissionForms(filters, userId) {
+      const context = this;
+      const auth = await googleService.getAuthToken();
+      const response = await googleService.getSpreadSheetValues({
+        auth,
+        sheetName: "AdmissionForms",
+      });
+
+      if (response?.data) {
+        const { values } = response.data;
+        const forms = googleService.mapValuesToObject(values);
+        let rows = forms.filter((form) => {
+          let filterCondition = true;
+
+          if (userId) {
+            filterCondition &&= form["UserID"] === userId;
+          }
+
+          if (filters?.sessionId) {
+            filterCondition &&= form["SessionID"] === filters?.sessionId;
+          }
+
+          return filterCondition;
+        });
+
+        rows = await Promise.all(
+          rows.map(async (form) => {
+            const userInfo = await context.fetchOneUser(form.UserID, auth);
+
+            if (userInfo) {
+              delete userInfo?.Password;
+            }
+
+            return {
+              ...form,
+              User: userInfo,
+            };
+          })
+        );
+
+        return { rows, count: forms.length };
       }
 
       return response?.data;

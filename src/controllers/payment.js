@@ -14,6 +14,14 @@ const { mapAsFilters } = require("../utils/helpers");
 
 const Controllers = function () {
   return {
+    /**
+     *
+     * @method
+     * @param {Request} req
+     * @param {Response} res
+     * @param {Function} next
+     * @returns Response
+     */
     async paymentWebhook(req, res, next) {
       try {
         const {
@@ -23,7 +31,8 @@ const Controllers = function () {
           mobile,
           reference,
           amount,
-          currency
+          currency,
+          source = 'paystack'
         } = req.body;
         // console.log(req.body);
 
@@ -100,7 +109,7 @@ const Controllers = function () {
 
         // CREATE A UNIQUE PAYMENT RECORD
         const response = await dataSource.createPaymentRecord(
-          new PaymentSchema(userId, sessionId, reference, amount, currency)
+          new PaymentSchema(userId, sessionId, reference, amount, currency, source)
         );
 
         if (!response) {
@@ -121,6 +130,14 @@ const Controllers = function () {
       }
     },
 
+    /**
+     *
+     * @method
+     * @param {Request} req
+     * @param {Response} res
+     * @param {Function} next
+     * @returns Response
+     */
     async verifyPaymentByMobile(req, res, next) {
       try {
         const { mobile } = req.body;
@@ -172,6 +189,14 @@ const Controllers = function () {
       }
     },
 
+    /**
+     *
+     * @method
+     * @param {Request} req
+     * @param {Response} res
+     * @param {Function} next
+     * @returns Response
+     */
     async verifyPaymentByReference(req, res, next) {
       try {
         const { reference } = req.body;
@@ -212,6 +237,14 @@ const Controllers = function () {
       }
     },
 
+    /**
+     *
+     * @method
+     * @param {Request} req
+     * @param {Response} res
+     * @param {Function} next
+     * @returns Response
+     */
     async getAllUserPayments(req, res, next) {
       try {
         let { userId } = req.user;

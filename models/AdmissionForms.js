@@ -146,6 +146,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      preferredSchool: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       preferredCourse: {
         type: DataTypes.STRING,
         allowNull: true,
@@ -213,6 +217,16 @@ module.exports = (sequelize, DataTypes) => {
       paymentReference: {
         type: DataTypes.STRING,
         allowNull: false,
+      },
+      hasCompletedForm: {
+        allowNull: false,
+        defaultValue: false,
+        type: DataTypes.BOOLEAN,
+      },
+      isEditable: {
+        allowNull: false,
+        defaultValue: true,
+        type: DataTypes.BOOLEAN,
       },
       deleted: {
         allowNull: false,

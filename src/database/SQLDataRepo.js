@@ -4,7 +4,7 @@ const models = require("../../models/index");
 const patterns = require("../constants/patterns");
 const googleService = require("../utils/googleServices");
 const hash = require("../utils/hash");
-const { User, Payments, Session, AdmissionForms } = models;
+const { User, Payments, Session, AdmissionForms, Admin } = models;
 
 const DataRepo = function () {
   return {
@@ -96,6 +96,43 @@ const DataRepo = function () {
     },
 
     /**
+     * Find all users
+     * @param {{ role?: string }} filters
+     * @returns
+     */
+    async fetchAllUsers(filters) {
+      const filterConditions = {};
+
+      if (filters?.role) {
+        filterConditions.role = { [Op.in]: filters.role.split(",") };
+      }
+
+      // if (filters?.sessionId) {
+      //   filterConditions.sessionId = filters?.sessionId;
+      // }
+
+      const offset = filters.page < 1 ? 1 : filters.page - 1;
+      const { limit } = filters;
+
+      return User.findAndCountAll({
+        where: {
+          ...filterConditions,
+        },
+        // include: [
+        //   {
+        //     model: User,
+        //     attributes: { exclude: ["password"] },
+        //   },
+        // ],
+        limit:
+          limit && typeof limit === "number" && !Number.isNaN(limit)
+            ? limit
+            : undefined,
+        offset: offset * (limit || 1),
+      });
+    },
+
+    /**
      * Updates a user
      * @param {string} userId
      * @param {{}} payload
@@ -105,6 +142,66 @@ const DataRepo = function () {
       return User.update(payload, {
         where: { userId },
         returning: true,
+      });
+    },
+
+    /**
+     * Adds a new admin
+     * @param {{
+     * firstName: string;
+     * lastName: string;
+     * mobile: string;
+     * email: string;
+     * password: string;
+     * role: 'ADMIN';
+     * hasVerifiedEmail: boolean;
+     * emailVerificationToken: string;
+     * hasVerifiedPhone: boolean;
+     * }} payload
+     * @returns
+     */
+    async createAdmin({
+      firstName,
+      lastName,
+      mobile,
+      email,
+      password,
+      role,
+      hasVerifiedEmail = false,
+      emailVerificationToken,
+      hasVerifiedPhone = false,
+      isActive = true,
+    }) {
+      const payload = {
+        firstName,
+        lastName,
+        mobile,
+        email,
+        role,
+        password,
+        hasVerifiedEmail,
+        emailVerificationToken,
+        hasVerifiedPhone,
+        isActive,
+      };
+
+      return Admin.create(payload);
+    },
+
+    /**
+     * Finds a admin
+     * @param {string} searchParam
+     * @returns
+     */
+    async fetchOneAdmin(searchParam) {
+      return Admin.findOne({
+        where: {
+          [Op.or]: this.UUIDOrStringTypeConditionSelector(
+            searchParam,
+            [{ email: searchParam }, { mobile: searchParam }],
+            [{ adminId: searchParam }]
+          ),
+        },
       });
     },
 
@@ -299,13 +396,63 @@ const DataRepo = function () {
     /**
      * Finds an admission record
      * @param {string} searchParam
+     * @param {string} [sessionId]
      * @returns
      */
-    async fetchOneAdmissionForm(searchParam) {
+    async fetchOneAdmissionForm(searchParam, sessionId) {
+      const extra = {};
+
+      if (sessionId) {
+        extra.sessionId = sessionId;
+      }
+
       return AdmissionForms.findOne({
         where: {
-          [Op.or]: [{ sessionId: searchParam }, { formId: searchParam }],
+          ...extra,
+          [Op.or]: [
+            { sessionId: searchParam },
+            { formId: searchParam },
+            { userId: searchParam },
+          ],
         },
+      });
+    },
+
+    /**
+     * Finds all admission records
+     * @param {{}} filters
+     * @param {string} [userId]
+     * @returns
+     */
+    async fetchAllAdmissionForms(filters, userId) {
+      const filterConditions = {};
+
+      if (userId) {
+        filterConditions.userId = userId;
+      }
+
+      if (filters?.sessionId) {
+        filterConditions.sessionId = filters?.sessionId;
+      }
+
+      const offset = filters.page < 1 ? 1 : filters.page - 1;
+      const { limit } = filters;
+
+      return AdmissionForms.findAndCountAll({
+        where: {
+          ...filterConditions,
+        },
+        include: [
+          {
+            model: User,
+            attributes: { exclude: ["password"] },
+          },
+        ],
+        limit:
+          limit && typeof limit === "number" && !Number.isNaN(limit)
+            ? limit
+            : undefined,
+        offset: offset * (limit || 1),
       });
     },
   };

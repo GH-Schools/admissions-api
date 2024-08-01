@@ -145,6 +145,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      preferredSchool: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       preferredCourse: {
         type: Sequelize.STRING,
         allowNull: true,
@@ -212,6 +216,16 @@ module.exports = {
       paymentReference: {
         type: Sequelize.STRING,
         allowNull: false,
+      },
+      hasCompletedForm: {
+        allowNull: false,
+        defaultValue: false,
+        type: Sequelize.BOOLEAN,
+      },
+      isEditable: {
+        allowNull: false,
+        defaultValue: true,
+        type: Sequelize.BOOLEAN,
       },
       deleted: {
         allowNull: false,

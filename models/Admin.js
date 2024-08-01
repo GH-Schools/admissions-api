@@ -2,7 +2,7 @@
 const { Model, UUIDV4 } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-  class Payments extends Model {
+  class Admin extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -10,54 +10,69 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Payments.belongsTo(models.User, {
-        foreignKey: "userId",
-        targetKey: "userId",
-      });
-
-      Payments.belongsTo(models.Session, {
-        foreignKey: "sessionId",
-        targetKey: "sessionId",
-      });
     }
   }
 
-  Payments.init(
+  Admin.init(
     {
-      payId: {
+      adminId: {
         type: DataTypes.UUID,
         defaultValue: UUIDV4,
         unique: true,
       },
-      userId: {
-        allowNull: false,
-        type: DataTypes.UUID,
-      },
-      amount: {
-        type: DataTypes.DECIMAL(16, 2),
-        allowNull: false,
-      },
-      currency: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        defaultValue: "GHC",
-      },
-      reference: {
+      firstName: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      source: {
+      lastName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      mobile: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      sessionId: {
+      avatarUrl: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      password: {
+        type: DataTypes.STRING,
         allowNull: false,
-        type: DataTypes.UUID,
+      },
+      hasVerifiedEmail: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      emailVerificationToken: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      sex: {
+        type: DataTypes.STRING,
+        allowNull: true,
       },
       isActive: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: true,
+      },
+      role: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      lastLogin: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      loginCount: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
       },
       deleted: {
         allowNull: false,
@@ -67,10 +82,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "Payments",
+      modelName: "Admin",
       freezeTableName: true,
     }
   );
 
-  return Payments;
+  return Admin;
 };

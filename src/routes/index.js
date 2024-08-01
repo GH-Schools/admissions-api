@@ -47,7 +47,17 @@ router.put(
   controllers.completePasswordReset
 );
 
+router.post(
+  "/admin/login",
+  apikeyMid,
+  validatorMiddleWare.validateLogin,
+  validatorMiddleWare.validateRequest,
+  controllers.loginAdmin
+);
+
 router.get("/get-profile", apikeyMid, authMid, controllers.getUserProfile);
+
+router.get("/user/get-users", apikeyMid, authMid, controllers.getAllUsers);
 
 router.get(
   "/payment/get-my-payments",
@@ -123,7 +133,7 @@ router.post(
     "nationality",
     "regionOfResidence",
     "nationalIDType",
-    "nationalIDNumber",
+    "nationalIDNumber"
   ),
   validatorMiddleWare.validateRequest,
   controllers.saveAdmissionPersonalProfile
@@ -143,7 +153,7 @@ router.post(
     "priorExperience",
     "priorExperienceSpecialization",
     "source",
-    "reference",
+    "reference"
     // "mobile2",
   ),
   validatorMiddleWare.validateRequest,
@@ -165,17 +175,26 @@ router.post(
     "sponsorOccupation",
     "sponsorAddress",
     "sponsorMobile",
-    "reference",
+    "reference"
   ),
   validatorMiddleWare.validateRequest,
   controllers.saveAdmissionWelfareInformation
+);
+
+router.put(
+  "/admissions/update-form",
+  apikeyMid,
+  authMid,
+  validatorMiddleWare.selectValidation("formId", "userId"),
+  validatorMiddleWare.validateRequest,
+  controllers.updateAdmissionForm
 );
 
 router.get(
   "/admissions/get-all-forms",
   apikeyMid,
   authMid,
-  controllers.getAdmissionForm
+  controllers.getAllAdmissionForms
 );
 
 router.get(
@@ -183,6 +202,15 @@ router.get(
   apikeyMid,
   authMid,
   controllers.getAdmissionForm
+);
+
+router.post(
+  "/admissions/download",
+  apikeyMid,
+  authMid,
+  validatorMiddleWare.selectValidation("formId"),
+  validatorMiddleWare.validateRequest,
+  controllers.downloadAdmissionForm
 );
 
 module.exports = router;

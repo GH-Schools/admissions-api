@@ -1,61 +1,72 @@
 'use strict';
-
-const { UUIDV4 } = require('sequelize');
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Payments', {
+    await queryInterface.createTable('Admin', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      payId: {
+      adminId: {
         type: Sequelize.UUID,
-        defaultValue: UUIDV4,
+        defaultValue: Sequelize.UUIDV4,
         unique: true,
       },
-      userId: {
-        allowNull: false,
-        type: Sequelize.UUID,
-        references: {
-          model: 'User',
-          key: 'userId',
-          as: 'userId'
-        }
-      },
-      amount: {
-        type: Sequelize.DECIMAL(16, 2),
-        allowNull: false,
-      },
-      currency: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        defaultValue: "GHC",
-      },
-      reference: {
+      firstName: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      source: {
+      lastName: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      email: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      mobile: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      sessionId: {
+      avatarUrl: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      password: {
+        type: Sequelize.STRING,
         allowNull: false,
-        type: Sequelize.UUID,
-        references: {
-          model: 'Session',
-          key: 'sessionId',
-          as: 'sessionId'
-        }
+      },
+      hasVerifiedEmail: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      emailVerificationToken: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      sex: {
+        type: Sequelize.STRING,
+        allowNull: true,
       },
       isActive: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        defaultValue: true
+      },
+      role: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      lastLogin: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      loginCount: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
       },
       deleted: {
         allowNull: false,
@@ -73,6 +84,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Payments');
+    await queryInterface.dropTable('Admin');
   }
 };
