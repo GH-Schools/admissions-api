@@ -149,8 +149,45 @@ const DataSource = function (dataRepo) {
      * @param {string} [userId]
      * @returns
      */
-     async fetchAllAdmissionForms(filters, userId) {
+    async fetchAllAdmissionForms(filters, userId) {
       return dataRepo.fetchAllAdmissionForms(filters, userId);
+    },
+
+    /**
+     * Adds a event/schedule record
+     * @param {import('../schemas/SessionSchema')} payload
+     * @returns
+     */
+    async createSchedule(payload) {
+      return dataRepo.createSchedule(payload);
+    },
+
+    /**
+     * Finds a single event/schedule record
+     * @param {string} [eventId]
+     * @returns
+     */
+    async fetchOneSchedule(eventId) {
+      return dataRepo.fetchOneSchedule(eventId);
+    },
+
+    /**
+     * Finds all event/schedule records
+     * @param {{}} filters
+     * @returns
+     */
+    async fetchAllSchedules(filters) {
+      return dataRepo.fetchAllSchedules(filters);
+    },
+
+    /**
+     * Update schedule
+     * @param {string} eventId
+     * @param {{}} payload
+     * @returns
+     */
+     async updateSchedule(eventId, payload) {
+      return dataRepo.updateAdmissionForm(eventId, payload);
     },
   };
 };

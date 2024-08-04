@@ -671,6 +671,127 @@ const DataRepo = function () {
 
       return response?.data;
     },
+
+    /**
+     * Adds a event/schedule record
+     * @param {import('../schemas/ScheduleSchema')} payload
+     * @returns
+     */
+    async createSchedule({
+      eventId,
+      title,
+      startDate,
+      endDate,
+      details,
+      deleted,
+      createdAt,
+      updatedAt,
+    }) {
+      const auth = await googleService.getAuthToken();
+      const response = await googleService.appendToSpreadSheetValues({
+        auth,
+        sheetName: "EventSchedule",
+        values: [
+          [
+            eventId,
+            title,
+            startDate,
+            endDate,
+            details,
+            deleted,
+            createdAt,
+            updatedAt,
+          ],
+        ],
+      });
+      return response?.data?.updates?.updatedRows;
+    },
+
+    /**
+     * Finds a single event/schedule record
+     * @param {string} eventId
+     * @param {string} [auth]
+     * @returns
+     */
+    async fetchOneSchedule(eventId, auth) {
+      auth = auth ?? (await googleService.getAuthToken());
+      const response = await googleService.getSpreadSheetValues({
+        auth,
+        sheetName: "EventSchedule",
+      });
+
+      if (response?.data) {
+        const { values } = response.data;
+        const schedules = googleService.mapValuesToObject(values);
+        return schedules.find((schedule) => {
+          return [schedule["SessionID"], schedule["EventID"]].includes(eventId);
+        });
+      }
+
+      return response?.data;
+    },
+
+    /**
+     * Finds all event/schedule records
+     * @param {{}} filters
+     * @returns
+     */
+    async fetchAllSchedules(filters) {
+      const context = this;
+      const auth = await googleService.getAuthToken();
+      const response = await googleService.getSpreadSheetValues({
+        auth,
+        sheetName: "EventSchedule",
+      });
+
+      if (response?.data) {
+        const { values } = response.data;
+        const forms = googleService.mapValuesToObject(values);
+        let rows = forms.filter((form) => {
+          let filterCondition = true;
+
+          if (filters?.sessionId) {
+            filterCondition &&= form["SessionID"] === filters?.sessionId;
+          }
+
+          return filterCondition;
+        });
+
+        return { rows, count: forms.length };
+      }
+
+      return response?.data;
+    },
+
+    /**
+     * Update schedule
+     * @param {string} eventId
+     * @param {{}} payload
+     * @returns
+     */
+    async updateSchedule(
+      eventId,
+      { title, startDate, endDate, details, deleted, createdAt, updatedAt }
+    ) {
+      const auth = await googleService.getAuthToken();
+      const response = await googleService.appendToSpreadSheetValues({
+        auth,
+        sheetName: "EventSchedule",
+        values: [
+          [
+            eventId,
+            title,
+            startDate,
+            endDate,
+            details,
+            deleted,
+            createdAt,
+            updatedAt,
+          ],
+        ],
+      });
+      return response?.data?.updates?.updatedRows;
+    },
   };
 };
 

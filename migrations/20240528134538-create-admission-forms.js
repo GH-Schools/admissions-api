@@ -1,4 +1,5 @@
 const { UUIDV4 } = require('sequelize');
+const { APPLICANT_INTERVIEW_STATUSES } = require('../src/constants');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -226,6 +227,20 @@ module.exports = {
         allowNull: false,
         defaultValue: true,
         type: Sequelize.BOOLEAN,
+      },
+      applicantHasBeenCalled: {
+        allowNull: false,
+        defaultValue: false,
+        type: Sequelize.BOOLEAN,
+      },
+      interviewStatus: {
+        allowNull: false,
+        defaultValue: APPLICANT_INTERVIEW_STATUSES.PENDING,
+        type: Sequelize.STRING,
+      },
+      comments: {
+        allowNull: true,
+        type: Sequelize.STRING,
       },
       deleted: {
         allowNull: false,

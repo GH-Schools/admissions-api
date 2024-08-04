@@ -1,4 +1,5 @@
 const { Model, UUIDV4 } = require("sequelize");
+const { APPLICANT_INTERVIEW_STATUSES } = require("../src/constants");
 module.exports = (sequelize, DataTypes) => {
   class AdmissionForms extends Model {
     /**
@@ -227,6 +228,20 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: true,
         type: DataTypes.BOOLEAN,
+      },
+      applicantHasBeenCalled: {
+        allowNull: false,
+        defaultValue: false,
+        type: DataTypes.BOOLEAN,
+      },
+      interviewStatus: {
+        allowNull: true,
+        defaultValue: APPLICANT_INTERVIEW_STATUSES.PENDING,
+        type: DataTypes.STRING,
+      },
+      comments: {
+        allowNull: true,
+        type: DataTypes.STRING,
       },
       deleted: {
         allowNull: false,

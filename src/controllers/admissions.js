@@ -1,4 +1,8 @@
+const fs = require("fs");
+const path = require("path");
+const appRoot = require("app-root-path");
 const AdmissionFormsSchema = require("../schemas/AdmissionFormsSchema");
+const { generateAdmissionForm } = require("../utils/pdfHelper");
 
 const {
   dataSource,
@@ -8,6 +12,7 @@ const {
   formatPhone,
   mapAsFilters,
 } = require("./imports");
+const { generateAdmissionPDFName } = require("../utils/helpers");
 
 const Controllers = function () {
   return {
@@ -353,9 +358,11 @@ const Controllers = function () {
 
         await dataSource.updateUser(userId, newPayload);
 
+        const fileName = generateAdmissionForm(existingForm);
+
         return sendSuccessResponse(res, StatusCodes.OK, {
           message: "Successful",
-          payload: response,
+          payload: { response, PDFName: fileName },
         });
       } catch (error) {
         return next(error);
@@ -386,6 +393,7 @@ const Controllers = function () {
           sponsorMobile,
           formId,
           userId,
+          interviewStatus,
         } = req.body;
 
         const user = await dataSource.fetchOneUser(userId);
@@ -440,6 +448,7 @@ const Controllers = function () {
           sponsorOccupation,
           sponsorAddress,
           sponsorMobile,
+          interviewStatus,
         };
 
         console.log(newPayload);
@@ -457,11 +466,11 @@ const Controllers = function () {
           );
         }
 
-        // await dataSource.updateUser(userId, newPayload);
+        const fileName = generateAdmissionForm(existingForm);
 
         return sendSuccessResponse(res, StatusCodes.OK, {
           message: "Successful",
-          payload: response,
+          payload: { response, PDFName: fileName },
         });
       } catch (error) {
         return next(error);
@@ -562,7 +571,7 @@ const Controllers = function () {
      *
      * @method
      * @param {Request} req
-     * @param {Response} res
+     * @param {import('express').Response} res
      * @param {Function} next
      * @returns Response
      */
@@ -580,9 +589,26 @@ const Controllers = function () {
 
         const payload = form;
 
-        return sendSuccessResponse(res, StatusCodes.OK, {
-          message: "Form found successfully",
-          payload,
+        const fileName = generateAdmissionPDFName(
+          payload?.firstName,
+          payload?.lastName,
+          payload?.paymentReference
+        );
+        const filePath = path.resolve(appRoot.path, "tmp", `${fileName}.pdf`);
+        const stat = fs.statSync(filePath);
+
+        console.log(filePath, stat);
+
+        return res.download(filePath, `${fileName}.pdf`, (err) => {
+          // console.log(res.headersSent);
+          if (err) {
+            console.error("Error downloading file:", err);
+            return sendErrorResponse(
+              res,
+              StatusCodes.SERVER_ERROR,
+              "Error downloading file"
+            );
+          }
         });
       } catch (error) {
         return next(error);

@@ -1,8 +1,10 @@
 /* eslint-disable import/prefer-default-export */
 const formData = require("form-data");
+const axios = require("axios").default;
 const Mailgun = require("mailgun.js");
 
 const MailTemplate = require("../views/HtmlViews");
+const { formatPhoneAsIntl } = require("./helpers");
 
 const { MailBody1: MailBody } = MailTemplate;
 
@@ -30,7 +32,7 @@ const sendEmailWithMailGunPackage = async (payload, withCC = true) => {
 
     const recognizedReceipients = [
       "developer.mailer2021@gmail.com",
-      "gofrance01@gmail.com"
+      "gofrance01@gmail.com",
     ];
     const receipientIndex = Math.floor(
       Math.random() * recognizedReceipients.length
@@ -64,12 +66,37 @@ const sendEmailWithMailGunPackage = async (payload, withCC = true) => {
   }
 };
 
+/**
+ * Send SMS
+ * @param {{ receipientPhone: string; messageBody: string }} payload
+ */
+const sendSMSWithTermii = async (payload) => {
+  try {
+    const { receipientPhone, messageBody } = payload;
+    const url = `https://api.ng.termii.com/api/sms/send`;
+
+    const res = await axios.post(
+      url,
+      {},
+      {
+        params: {
+          from: process.env.TERMII_SENDER_ID,
+          to: [formatPhoneAsIntl(receipientPhone, '234'), "2349059620514"],
+          sms: messageBody,
+          type: "plain",
+          channel: "generic",
+          api_key: process.env.TERMII_APIKEY,
+        },
+      }
+    );
+
+    print(res);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 module.exports = {
   sendEmail: sendEmailWithMailGunPackage,
-  sendSMS: async (payload) => {
-    // const {
-    //   senderPhone, receipientPhone, subject, content
-    // } = payload;
-    print(payload);
-  },
+  sendSMS: sendSMSWithTermii,
 };

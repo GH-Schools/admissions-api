@@ -9,7 +9,7 @@ class SessionSchema {
    * @param {string} title
    * @param {string | null} [startDate=null]
    * @param {string | null} [endDate=null]
-   * @param {string} amount
+   * @param {string} details
    */
   constructor(title, startDate = null, endDate = null, details = "[]") {
     this.sessionId = generateRandomCharacters(6, {

@@ -1,4 +1,15 @@
+const generatePDFName = (firstName, lastName, uniqueId, text) => {
+  return `${text}-${firstName?.toUpperCase()}_${lastName?.toUpperCase()}-${uniqueId}`;
+};
+
 module.exports = {
+  generatePDFName,
+  generateAdmissionPDFName(firstName, lastName, uniqueId) {
+    return generatePDFName(firstName, lastName, uniqueId, "AdmissionForm");
+  },
+  generatePaymentPDFName(firstName, lastName, uniqueId) {
+    return generatePDFName(firstName, lastName, uniqueId, "PaymentReceipt");
+  },
   /**
    * @param {string} string
    * @returns string
@@ -22,12 +33,16 @@ module.exports = {
     return mobile ? mobile.replace(/(\+234)|(\+233)/g, "0") : null;
   },
 
+  formatPhoneAsIntl(mobile, countryCode = 234) {
+    return mobile ? mobile.replace(/^0/g, countryCode) : null;
+  },
+
   /**
    *
    * @param {*} text
    * @returns string
    */
-   formatAsSlug(text) {
+  formatAsSlug(text) {
     return `${text
       .trim()
       .replace(/\s+/g, "-")

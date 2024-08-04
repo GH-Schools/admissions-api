@@ -55,9 +55,25 @@ router.post(
   controllers.loginAdmin
 );
 
+router.post(
+  "/admin/register",
+  apikeyMid,
+  validatorMiddleWare.validateSignUp,
+  validatorMiddleWare.selectValidation("firstName", "lastName", "mobile"),
+  validatorMiddleWare.validateRequest,
+  controllers.registerAdmin
+);
+
 router.get("/get-profile", apikeyMid, authMid, controllers.getUserProfile);
 
 router.get("/user/get-users", apikeyMid, authMid, controllers.getAllUsers);
+
+router.get(
+  "/payment/get-all-payments",
+  apikeyMid,
+  authMid,
+  controllers.getAllPayments
+);
 
 router.get(
   "/payment/get-my-payments",
@@ -96,6 +112,15 @@ router.post(
   controllers.paymentWebhook
 );
 
+router.post(
+  "/payment/download",
+  apikeyMid,
+  authMid,
+  validatorMiddleWare.selectValidation("payId"),
+  validatorMiddleWare.validateRequest,
+  controllers.downloadPaymentReceipt
+);
+
 // SESSIONS
 router.post(
   "/session/create-session",
@@ -111,6 +136,25 @@ router.get(
   apikeyMid,
   controllers.getCurrentSession
 );
+
+// EVENT AND SCHEDULES
+router.post(
+  "/schedules/create-schedule",
+  apikeyMid,
+  authMid,
+  validatorMiddleWare.selectValidation("title", "dueDate", "type"),
+  validatorMiddleWare.validateRequest,
+  controllers.addSchedule
+);
+
+router.get(
+  "/schedules/:eventId",
+  apikeyMid,
+  authMid,
+  controllers.getSingleSchedule
+);
+
+router.get("/schedules", apikeyMid, authMid, controllers.getAllSchedules);
 
 // ADMISSIONS
 router.post(

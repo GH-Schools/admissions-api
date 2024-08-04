@@ -4,7 +4,8 @@ const models = require("../../models/index");
 const patterns = require("../constants/patterns");
 const googleService = require("../utils/googleServices");
 const hash = require("../utils/hash");
-const { User, Payments, Session, AdmissionForms, Admin } = models;
+const { User, Payments, Session, AdmissionForms, Admin, EventSchedule } =
+  models;
 
 const DataRepo = function () {
   return {
@@ -260,6 +261,12 @@ const DataRepo = function () {
             [{ userId: reference }, { payId: reference }]
           ),
         },
+        include: [
+          {
+            model: User,
+            attributes: { exclude: ["password"] },
+          },
+        ],
       });
     },
 
@@ -453,6 +460,74 @@ const DataRepo = function () {
             ? limit
             : undefined,
         offset: offset * (limit || 1),
+      });
+    },
+
+    /**
+     * Adds a event/schedule record
+     * @param {import('../schemas/ScheduleSchema')} payload
+     * @returns
+     */
+    async createSchedule({ eventId, createdAt, updatedAt, ...payload }) {
+      return EventSchedule.create(payload);
+    },
+
+    /**
+     * Finds a single event/schedule record
+     * @param {string} [eventId]
+     * @returns
+     */
+    async fetchOneSchedule(eventId) {
+      return EventSchedule.findOne({
+        where: {
+          eventId,
+        },
+      });
+    },
+
+    /**
+     * Finds all event/schedule records
+     * @param {{}} filters
+     * @returns
+     */
+    async fetchAllSchedules(filters) {
+      const filterConditions = {};
+
+      if (filters?.sessionId) {
+        filterConditions.sessionId = filters?.sessionId;
+      }
+
+      const offset = filters.page < 1 ? 1 : filters.page - 1;
+      const { limit } = filters;
+
+      return EventSchedule.findAndCountAll({
+        where: {
+          ...filterConditions,
+        },
+        // include: [
+        //   {
+        //     model: User,
+        //     attributes: { exclude: ["password"] },
+        //   },
+        // ],
+        limit:
+          limit && typeof limit === "number" && !Number.isNaN(limit)
+            ? limit
+            : undefined,
+        offset: offset * (limit || 1),
+      });
+    },
+
+    /**
+     * Update schedule
+     * @param {string} eventId
+     * @param {{}} payload
+     * @returns
+     */
+    async updateSchedule(eventId, payload) {
+      return EventSchedule.update(payload, {
+        where: { eventId },
+        returning: true,
       });
     },
   };

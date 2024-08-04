@@ -104,6 +104,7 @@ tests/report/
 docs/
 
 uploads/*
+tmp/*
 
 # Miscellaneous
 .DS_Store

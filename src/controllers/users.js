@@ -263,7 +263,7 @@ const Controllers = function () {
           mobile,
           password
         );
-        let response = await dataSource.createUser(newAdminSchema);
+        let response = await dataSource.createAdmin(newAdminSchema);
         if (!response) {
           return sendErrorResponse(
             res,

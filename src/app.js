@@ -6,6 +6,7 @@ const indexRouter = require('./routes/index');
 const appErrorHandler = require("./errorHelpers/appErrorHandler");
 const noRouteHandler = require("./errorHelpers/noRouteHandler");
 
+app.use(express.static('tmp'));
 app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ extended: true }));
 

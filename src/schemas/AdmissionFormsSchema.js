@@ -1,3 +1,4 @@
+const { APPLICANT_INTERVIEW_STATUSES } = require("../constants");
 const { generateRandomCharacters } = require("../utils/helpers");
 
 /**
@@ -6,7 +7,7 @@ const { generateRandomCharacters } = require("../utils/helpers");
  */
 class AdmissionFormsSchema {
   /**
-   * 
+   *
    * @param {{
    *  userId: string;
    *  sessionId: string;
@@ -54,7 +55,7 @@ class AdmissionFormsSchema {
    *  sponsorOccupation: string;
    *  sponsorAddress: string;
    *  sponsorMobile: string;
-   * }} payload 
+   * }} payload
    */
   constructor({
     userId,
@@ -156,6 +157,7 @@ class AdmissionFormsSchema {
     this.sponsorAddress = sponsorAddress;
     this.sponsorMobile = sponsorMobile;
     this.deleted = false;
+    this.interviewStatus = APPLICANT_INTERVIEW_STATUSES.PENDING;
     this.createdAt = new Date();
     this.updatedAt = this.createdAt;
   }
