@@ -343,6 +343,8 @@ const Controllers = function () {
           ),
         });
 
+        console.log(passwordResetLink);
+
         return sendSuccessResponse(res, StatusCodes.OK, {
           message: "Email sent successfully",
           payload: {

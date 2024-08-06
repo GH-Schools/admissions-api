@@ -144,7 +144,7 @@ const Controllers = function () {
           );
         }
 
-        const fileName = generatePaymentReceipt(response);
+        const fileName = generatePaymentReceipt(response, userWithPhone);
 
         return sendSuccessResponse(res, StatusCodes.OK, {
           message: "Triggered Successfully",

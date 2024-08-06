@@ -74,7 +74,7 @@ module.exports = {
 
     return fileName;
   },
-  generatePaymentReceipt(paymentInfo) {
+  generatePaymentReceipt(paymentInfo, userInfo) {
     // Create a document
     const doc = new PDFDocument();
 
@@ -87,8 +87,8 @@ module.exports = {
 
     // Saving the pdf file in root directory.
     const fileName = generatePaymentPDFName(
-      paymentInfo?.User?.firstName,
-      paymentInfo?.User?.lastName,
+      userInfo?.firstName,
+      userInfo?.lastName,
       paymentInfo?.reference
     );
     doc.pipe(fs.createWriteStream(`tmp/${fileName}.pdf`));
