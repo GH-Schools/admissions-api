@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
-const appRoot = require("app-root-path");
 const User = require("../schemas/UserSchema");
+const { PROJECT_DIR: appRoot } = require('../constants');
 const PaymentSchema = require("../schemas/PaymentSchema");
 const { UserVerificationMailContent } = require("../views/HtmlViews");
 const {
@@ -16,8 +16,8 @@ const {
 } = require("./imports");
 const { generatePaymentReceipt } = require("../utils/pdfHelper");
 const { generatePaymentPDFName } = require("../utils/helpers");
-const { sendSMS } = require("../utils/sendNotifications");
 const { NewStudentApplication } = require("../views/SmsViews");
+const { sendSMS } = require("../utils/sendNotifications");
 
 const Controllers = function () {
   return {
@@ -411,7 +411,7 @@ const Controllers = function () {
           payload?.User?.lastName,
           payload?.reference
         );
-        const filePath = path.resolve(appRoot.path, "tmp", `${fileName}.pdf`);
+        const filePath = path.resolve(appRoot, "tmp", `${fileName}.pdf`);
 
         try {
           const stat = fs.statSync(filePath);

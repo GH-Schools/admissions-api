@@ -1,12 +1,15 @@
+const fs = require("fs");
 const path = require("path");
-const appRootPath = require("app-root-path");
+const stream = require("stream");
+const { once } = require("events");
+const { PROJECT_DIR: appRootPath } = require('../constants');
 
 const {
   dataSource,
   StatusCodes,
-  uploader: cloudUploader,
-  sendSuccessResponse,
   sendErrorResponse,
+  sendSuccessResponse,
+  uploader: cloudUploader,
 } = require("./imports");
 
 const Controllers = function () {
@@ -35,44 +38,80 @@ const Controllers = function () {
     },
 
     /**
-   * @method
-   * @param {Request} req
-   * @param {Response} res
-   * @param {Function} next
-   * @returns Response
-   */
-  async upload(req, res, next) {
-    try {
-      // here
-      if (!req.file) {
-        return sendErrorResponse(
-          res,
-          HttpStatusCode.BAD_REQUEST,
-          "file parameter missing in request"
-        );
-      }
+     * @method
+     * @param {Request} req
+     * @param {Response} res
+     * @param {Function} next
+     * @returns Response
+     */
+    async getLogs(req, res, next) {
+      try {
+        const { download, key: passkey, logFile = "app.log" } = req.query;
 
-      const filePath = `${appRootPath}/uploads/${req.file.filename}`;
-      const cloudResponse = await cloudUploader(filePath, req.file.filename);
+        if (!passkey || passkey !== "ghschooladmin123") {
+          return sendErrorResponse(
+            res,
+            HttpStatusCode.FORBIDDEN,
+            "Access Denied"
+          );
+        }
 
-      if (!cloudResponse?.secure_url) {
-        return sendErrorResponse(
-          res,
-          StatusCodes.INTERNAL_SERVER,
-          cloudResponse
-        );
+        const file = `./logs/${logFile}`;
+        if (!!download && download === "true") {
+          return res.status(HttpStatusCode.OK).download(file);
+        }
+
+        const writeStream = fs.createReadStream(file);
+        stream.pipeline(writeStream, new stream.PassThrough(), res, (err) => {
+          if (err) throw err;
+        });
+
+        await once(writeStream, "open");
+        return stream;
+      } catch (error) {
+        return next(error);
       }
-      // || cloudResponse.Location
-      return sendSuccessResponse(res, StatusCodes.OK, {
-        message: "uploaded successfully",
-        data: {
-          imageUrl: cloudResponse?.secure_url,
-        },
-      });
-    } catch (error) {
-      return next(error);
-    }
-  },
+    },
+
+    /**
+     * @method
+     * @param {Request} req
+     * @param {Response} res
+     * @param {Function} next
+     * @returns Response
+     */
+    async upload(req, res, next) {
+      try {
+        // here
+        if (!req.file) {
+          return sendErrorResponse(
+            res,
+            HttpStatusCode.BAD_REQUEST,
+            "file parameter missing in request"
+          );
+        }
+
+        const filePath = `${appRootPath}/uploads/${req.file.filename}`;
+        const cloudResponse = await cloudUploader(filePath, req.file.filename);
+
+        if (!cloudResponse?.secure_url) {
+          return sendErrorResponse(
+            res,
+            StatusCodes.INTERNAL_SERVER,
+            cloudResponse
+          );
+        }
+        // || cloudResponse.Location
+        return sendSuccessResponse(res, StatusCodes.OK, {
+          message: "uploaded successfully",
+          data: {
+            imageUrl: cloudResponse?.secure_url,
+          },
+        });
+      } catch (error) {
+        return next(error);
+      }
+    },
   };
 };
 

@@ -90,9 +90,11 @@ const sendSMSWithTermii = async (payload) => {
       }
     );
 
-    print(res);
+    console.log(res);
+    return res;
   } catch (error) {
     console.error(error);
+    return error;
   }
 };
 

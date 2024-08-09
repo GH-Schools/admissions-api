@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const appRoot = require("app-root-path");
+const { PROJECT_DIR: appRoot } = require("../constants");
 const AdmissionFormsSchema = require("../schemas/AdmissionFormsSchema");
 const { generateAdmissionForm } = require("../utils/pdfHelper");
 
@@ -380,6 +380,8 @@ const Controllers = function () {
     async updateAdmissionForm(req, res, next) {
       try {
         const {
+          formId,
+          userId,
           reference,
           disability,
           sponsorName,
@@ -391,9 +393,9 @@ const Controllers = function () {
           sponsorOccupation,
           sponsorAddress,
           sponsorMobile,
-          formId,
-          userId,
           interviewStatus,
+          applicantHasBeenCalled,
+          isEditable,
         } = req.body;
 
         const user = await dataSource.fetchOneUser(userId);
@@ -427,13 +429,15 @@ const Controllers = function () {
 
         sessionId = currentSession?.sessionId ?? currentSession?.SessionID;
 
-        const paymentInfo = await dataSource.fetchOnePayment(reference);
-        if (!paymentInfo) {
-          return sendErrorResponse(
-            res,
-            StatusCodes.NOT_FOUND,
-            "Reference does not match any payment record"
-          );
+        if (reference) {
+          const paymentInfo = await dataSource.fetchOnePayment(reference);
+          if (!paymentInfo) {
+            return sendErrorResponse(
+              res,
+              StatusCodes.NOT_FOUND,
+              "Reference does not match any payment record"
+            );
+          }
         }
 
         const newPayload = {
@@ -448,6 +452,8 @@ const Controllers = function () {
           sponsorOccupation,
           sponsorAddress,
           sponsorMobile,
+          isEditable,
+          applicantHasBeenCalled,
           interviewStatus,
         };
 
@@ -594,7 +600,7 @@ const Controllers = function () {
           payload?.lastName,
           payload?.paymentReference
         );
-        const filePath = path.resolve(appRoot.path, "tmp", `${fileName}.pdf`);
+        const filePath = path.resolve(appRoot, "tmp", `${fileName}.pdf`);
         const stat = fs.statSync(filePath);
 
         console.log(filePath, stat);

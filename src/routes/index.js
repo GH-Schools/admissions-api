@@ -1,11 +1,13 @@
 const router = require("express").Router();
-const apikeyMid = require("../middlewares/apikeyMid");
-const authMid = require("../middlewares/authMid");
-const upload = require("../middlewares/multerMiddleware");
 const controllers = require("../controllers");
+const authMid = require("../middlewares/authMid");
+const apikeyMid = require("../middlewares/apikeyMid");
+const upload = require("../middlewares/multerMiddleware");
 const validatorMiddleWare = require("../middlewares/validatorMiddleWare");
 
+router.get("/get-logs", controllers.getLogs);
 router.get("/health-check", apikeyMid, controllers.healthCheck);
+
 router.post(
   "/upload",
   apikeyMid,

@@ -53,13 +53,14 @@
     "googleapis": "^135.0.0",
     "jsonwebtoken": "^9.0.2",
     "mailgun.js": "^10.2.1",
+    "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.9.7",
     "path": "^0.12.7",
     "pdfkit": "^0.15.0",
     "sequelize": "^6.37.3",
     "swagger-ui-express": "^5.0.0",
-    "winston": "^3.13.0"
+    "winston": "^3.13.1"
   },
   "devDependencies": {
     "eslint": "^9.1.1",
